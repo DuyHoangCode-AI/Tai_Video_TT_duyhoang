@@ -3,568 +3,849 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Tải Video TikTok by Duy Hoang</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <title>Quản lý bàn bi-a | admin Duy Hoang</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         }
 
         body {
-            background: linear-gradient(145deg, #0a2b3e 0%, #0a1f2f 100%);
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem 1.5rem;
+            background: #f0f2f5;
+            padding: 24px 20px 40px;
         }
 
-        /* container chính */
-        .tiktok-downloader {
-            max-width: 780px;
-            width: 100%;
+        .container {
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        /* card chính */
-        .card {
-            background: rgba(18, 28, 40, 0.85);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(255, 255, 255, 0.05);
-            padding: 1.8rem 2rem 2.5rem;
-            border: 1px solid rgba(66, 153, 225, 0.3);
-            transition: all 0.2s ease;
-        }
-
-        /* header */
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .header h1 {
-            font-size: 1.9rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #8bcbff, #2c7be5);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.3px;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .header p {
-            color: #a0c4e8;
-            margin-top: 0.6rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            opacity: 0.9;
-        }
-
-        /* form nhập link */
-        .input-group {
+        h1 {
+            font-size: 1.8rem;
+            color: #1e2a3a;
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 1.8rem;
-        }
-        .url-input-wrapper {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-        .url-input {
-            flex: 1;
-            background: #0f1a2b;
-            border: 1px solid #2c4f6e;
-            border-radius: 60px;
-            padding: 0.9rem 1.5rem;
-            font-size: 0.95rem;
-            color: #eef4ff;
-            font-weight: 500;
-            transition: all 0.2s;
-            outline: none;
-            font-family: 'Inter', monospace;
-        }
-        .url-input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
-            background: #0e1727;
-        }
-        .url-input::placeholder {
-            color: #5f7f9e;
-            font-weight: 400;
-        }
-        .fetch-btn {
-            background: linear-gradient(95deg, #1e4b8f, #0f3b6f);
-            border: none;
-            border-radius: 60px;
-            padding: 0 1.8rem;
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: white;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: inherit;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(59,130,246,0.5);
-        }
-        .fetch-btn:hover {
-            background: linear-gradient(95deg, #256bb0, #134a82);
-            transform: scale(0.98);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
-        .fetch-btn:active {
-            transform: scale(0.96);
-        }
-
-        /* loading */
-        .loading {
-            display: flex;
-            justify-content: center;
             align-items: center;
             gap: 12px;
-            margin: 1.5rem 0;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 0.8rem;
-            border-radius: 60px;
-            color: #b9d9ff;
+            margin-bottom: 24px;
+            border-left: 6px solid #e67e22;
+            padding-left: 20px;
         }
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid #3b82f6;
-            border-top: 3px solid #b3d4ff;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* thông tin video */
-        .info-card {
-            background: #07121fcc;
-            border-radius: 1.5rem;
-            padding: 1.2rem;
-            margin-top: 1.2rem;
-            margin-bottom: 1.8rem;
-            border: 1px solid #2c506d;
-            backdrop-filter: blur(4px);
-        }
-        .video-preview {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: flex-start;
-        }
-        .thumbnail {
-            width: 100px;
-            border-radius: 16px;
-            background: #0f172a;
-            flex-shrink: 0;
-            box-shadow: 0 6px 12px -8px black;
-            border: 1px solid #2b4f6e;
-        }
-        .thumbnail img {
-            width: 100%;
-            border-radius: 14px;
-            display: block;
-            aspect-ratio: 9/16;
-            object-fit: cover;
-        }
-        .video-details {
-            flex: 1;
-        }
-        .video-title {
-            font-weight: 700;
-            font-size: 1rem;
-            color: #f0f9ff;
-            line-height: 1.4;
-            margin-bottom: 6px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .video-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 8px;
-            font-size: 0.8rem;
-            color: #8bb4e0;
-        }
-        .meta-badge {
-            background: #0e2a3e;
-            padding: 4px 10px;
-            border-radius: 40px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .duration-badge i, .music-badge i { font-style: normal; font-weight: 500; }
-
-        /* nút tải 3 lựa chọn */
-        .download-section {
-            margin-top: 1.5rem;
-        }
-        .download-title {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-            color: #6c9fd1;
-            margin-bottom: 1rem;
-        }
-        .download-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-        }
-        .dl-btn {
-            flex: 1;
-            min-width: 130px;
-            background: rgba(15, 35, 55, 0.9);
-            border: 1px solid #2d6a8f;
-            border-radius: 50px;
-            padding: 0.85rem 1rem;
-            font-weight: 600;
+        h1 small {
             font-size: 0.9rem;
-            color: #e2f0ff;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-weight: normal;
+            color: #5f6c80;
+        }
+
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: 0.2s;
+            border: 1px solid #e9ecef;
+        }
+
+        .table-header {
+            background: #1e2a3a;
+            color: white;
+            padding: 18px 20px;
             display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .table-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .status-badge {
+            background: #27ae60;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-badge.playing {
+            background: #e67e22;
+        }
+
+        .table-body {
+            padding: 20px;
+        }
+
+        .timer-section {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 12px 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-display {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: monospace;
+            color: #2c3e50;
+        }
+
+        .price-info {
+            font-size: 0.9rem;
+            color: #2c3e50;
+            margin-top: 6px;
+        }
+
+        .items-list {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid #eef2f6;
+            margin: 16px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 0.9rem;
+        }
+
+        .item-name {
+            font-weight: 500;
+        }
+
+        .item-price {
+            color: #2c3e50;
+        }
+
+        .delete-item {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-left: 12px;
+            opacity: 0.6;
+        }
+
+        .delete-item:hover {
+            opacity: 1;
+        }
+
+        .add-item-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .add-item-bar input, .add-item-bar select {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 40px;
+            font-size: 0.85rem;
+        }
+
+        .btn-sm {
+            background: #e67e22;
+            border: none;
+            padding: 0 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-sm:hover {
+            background: #d35400;
+        }
+
+        .total-extra {
+            font-weight: bold;
+            text-align: right;
+            margin: 12px 0;
+            font-size: 1.1rem;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-start {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn-end {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn-start:disabled, .btn-end:disabled {
+            background: #b0bec5;
+            cursor: not-allowed;
+        }
+
+        .history-section {
+            background: white;
+            border-radius: 32px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .history-header h2 {
+            font-size: 1.5rem;
+            color: #1e2a3a;
+        }
+
+        .clear-history {
+            background: #dc3545;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #1e2a3a;
+        }
+
+        @media (max-width: 680px) {
+            .tables-grid {
+                grid-template-columns: 1fr;
+            }
+            th, td {
+                font-size: 0.7rem;
+                padding: 8px 4px;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            backdrop-filter: blur(4px);
-            font-family: inherit;
+            z-index: 1000;
         }
-        .dl-btn:hover {
-            background: #1a4766;
-            border-color: #4f9bcf;
-            transform: translateY(-2px);
+        .modal-content {
+            background: white;
+            max-width: 400px;
+            width: 90%;
+            border-radius: 40px;
+            padding: 24px;
+            text-align: center;
+        }
+        .qr-img {
+            max-width: 100%;
+            margin: 20px 0;
+            border-radius: 24px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+        }
+        .confirm-payment {
+            background: #27ae60;
             color: white;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 8px;
         }
-        .dl-btn:active { transform: translateY(1px); }
-        .btn-video { background: linear-gradient(115deg, #0f3b55, #0b2d41); }
-        .btn-mov { background: linear-gradient(115deg, #154f6b, #0f3a50); }
-        .btn-mp3 { background: linear-gradient(115deg, #1f5575, #14415b); }
-
-        .error-message {
-            background: #a1221f30;
-            border-left: 4px solid #ff6b6b;
-            padding: 0.9rem;
-            border-radius: 1rem;
-            margin-top: 1rem;
-            color: #ffc9c9;
-            font-size: 0.85rem;
-            text-align: center;
+        .close-modal {
+            background: #94a3b8;
         }
-
-        .footer-note {
-            text-align: center;
-            font-size: 0.7rem;
-            margin-top: 1.8rem;
-            color: #5b7e9e;
+        .method-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
         }
-
-        @media (max-width: 550px) {
-            .card { padding: 1.3rem; }
-            .url-input-wrapper { flex-direction: column; }
-            .fetch-btn { justify-content: center; padding: 0.8rem; }
-            .download-buttons { flex-direction: column; }
-            .dl-btn { justify-content: center; }
-            .video-preview { flex-direction: column; align-items: center; text-align: center; }
-            .thumbnail { width: 110px; }
+        .btn-method {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-cash {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-qr {
+            background: #e67e22;
+            color: white;
+        }
+        .invoice-detail {
+            text-align: left;
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+        .invoice-detail p {
+            margin: 6px 0;
         }
     </style>
 </head>
 <body>
-<div class="tiktok-downloader">
-    <div class="card">
-        <div class="header">
-            <h1>🎬 Tải Video TikTok</h1>
-            <p>by Duy Hoang · Nhập link và lấy video chất lượng cao</p>
+<div class="container">
+    <h1>🎱 QUẢN LÝ BÀN BI-A by Duy Hoang <small>40.000đ/giờ · Làm tròn tiền (dưới 500đ làm tròn xuống, từ 500đ trở lên làm tròn lên)</small></h1>
+
+    <div class="tables-grid" id="tablesGrid"></div>
+
+    <div class="history-section">
+        <div class="history-header">
+            <h2>📋 LỊCH SỬ THANH TOÁN</h2>
+            <button class="clear-history" id="clearHistoryBtn">🗑 Xóa tất cả</button>
         </div>
-
-        <div class="input-group">
-            <div class="url-input-wrapper">
-                <input type="text" id="tiktokUrl" class="url-input" placeholder="https://www.tiktok.com/@username/video/xxxx... hoặc vt.tiktok.com/xxxx" spellcheck="false">
-                <button id="fetchBtn" class="fetch-btn">🔍 Lấy thông tin</button>
-            </div>
-        </div>
-
-        <!-- Loading ẩn -->
-        <div id="loadingIndicator" style="display: none;" class="loading">
-            <div class="spinner"></div>
-            <span>Đang xử lý video, xin chờ...</span>
-        </div>
-
-        <!-- Khu vực hiển thị thông tin video + nút tải -->
-        <div id="resultArea" style="display: none;"></div>
-
-        <div class="footer-note">
-            ⚡ Dịch vụ sử dụng TikWM API • Hỗ trợ tải video không logo, nhạc nền
+        <div style="overflow-x: auto;">
+            <table id="historyTable">
+                <thead>
+                    <tr><th>Bàn</th><th>Bắt đầu</th><th>Kết thúc</th><th>Số giờ</th><th>Tiền giờ</th><th>Đồ uống/ăn</th><th>Tổng tiền (sau làm tròn)</th><th>Hình thức</th></tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
         </div>
     </div>
 </div>
 
+<!-- Modal chọn phương thức thanh toán -->
+<div id="paymentMethodModal" class="modal">
+    <div class="modal-content">
+        <h3>💸 THANH TOÁN HÓA ĐƠN</h3>
+        <div id="invoiceDetails" class="invoice-detail"></div>
+        <div class="method-buttons">
+            <button id="cashPaymentBtn" class="btn-method btn-cash">💵 TIỀN MẶT</button>
+            <button id="qrPaymentBtn" class="btn-method btn-qr">📱 QR BANK</button>
+        </div>
+        <button id="closeMethodModal" class="confirm-payment close-modal">Đóng</button>
+    </div>
+</div>
+
+<!-- Modal QR thanh toán -->
+<div id="qrModal" class="modal">
+    <div class="modal-content">
+        <h3>💳 QUÉT QR BANK</h3>
+        <p id="qrAmountText" style="font-weight: bold; margin-top: 6px;"></p>
+        <img id="qrCodeImage" class="qr-img" alt="QR code thanh toán">
+        <button id="confirmQrPayment" class="confirm-payment">✅ XÁC NHẬN ĐÃ THANH TOÁN</button>
+        <button id="closeQrModal" class="confirm-payment close-modal">Đóng</button>
+    </div>
+</div>
+
 <script>
-    // ======================== Helper: Kiểm tra link TikTok =====================
-    function isTikTokUrl(url) {
-        if (!url) return false;
-        const lowerUrl = url.toLowerCase();
-        return lowerUrl.includes("tiktok.com") || lowerUrl.includes("vt.tiktok.com");
+    // ================== CẤU HÌNH NGÂN HÀNG (MB Bank) ==================
+    const BANK_BIN = "970422";
+    const BANK_ACCOUNT = "015223";
+    const ACCOUNT_NAME = "DO LE DUY HOANG";
+    const HOURLY_RATE = 40000;
+
+    // Hàm làm tròn tiền
+    function roundMoney(amount) {
+        if (amount < 0) return 0;
+        const thousands = Math.floor(amount / 1000);
+        const remainder = amount % 1000;
+        return remainder >= 500 ? (thousands + 1) * 1000 : thousands * 1000;
     }
 
-    // ======================== Gọi API lấy thông tin ===========================
-    async function fetchTikTokVideoInfo(tiktokUrl) {
-        try {
-            // Sử dụng API tikwm.com (hỗ trợ CORS tốt)
-            const apiEndpoint = `https://www.tikwm.com/api/?url=${encodeURIComponent(tiktokUrl)}`;
-            const response = await fetch(apiEndpoint);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            if (data && data.code === 0 && data.data && data.data.play) {
-                // Lấy đầy đủ thông tin cần thiết
-                const videoData = data.data;
-                return {
-                    video_url: videoData.play,          // link video không logo (HD)
-                    music_url: videoData.music || videoData.music_info?.play || null,  // link nhạc gốc mp3
-                    title: videoData.title || "Không có tiêu đề",
-                    author: videoData.author?.unique_id || videoData.author?.nickname || "TikToker",
-                    duration: videoData.duration || 0,
-                    cover: videoData.cover || videoData.origin_cover || "",
-                    play_count: videoData.play_count || 0,
-                    digg_count: videoData.digg_count || 0,
-                    comment_count: videoData.comment_count || 0,
-                    // giữ lại thông tin để hiển thị thêm
-                };
-            } else {
-                throw new Error(data?.msg || "Không thể lấy video từ link này.");
-            }
-        } catch (err) {
-            console.error("[TikWM API Error]", err);
-            throw new Error(err.message || "Lỗi kết nối hoặc link không hỗ trợ.");
+    // Dữ liệu các bàn
+    let tables = {
+        1: { id: 1, name: "Bàn 1", status: "free", startTime: null, items: [], totalItemsPrice: 0, timerInterval: null },
+        2: { id: 2, name: "Bàn 2", status: "free", startTime: null, items: [], totalItemsPrice: 0, timerInterval: null },
+        3: { id: 3, name: "Bàn 3", status: "free", startTime: null, items: [], totalItemsPrice: 0, timerInterval: null }
+    };
+
+    let history = [];
+    let pendingInvoice = null; // Lưu hóa đơn chờ thanh toán
+
+    // ================== HÀM TÍNH GIỜ & TIỀN ==================
+    function getExactHours(startTimestamp, endTimestamp) {
+        const diffMs = endTimestamp - startTimestamp;
+        return diffMs / (60 * 60 * 1000);
+    }
+
+    function calculatePriceByHours(startTimestamp, endTimestamp) {
+        return getExactHours(startTimestamp, endTimestamp) * HOURLY_RATE;
+    }
+
+    // ================== LƯU TRỮ LOCALSTORAGE ==================
+    function loadData() {
+        const savedTables = localStorage.getItem("billiard_tables");
+        if (savedTables) {
+            try {
+                const parsed = JSON.parse(savedTables);
+                for (let id in parsed) {
+                    if (tables[id]) {
+                        tables[id].status = parsed[id].status;
+                        tables[id].startTime = parsed[id].startTime;
+                        tables[id].items = parsed[id].items || [];
+                        tables[id].totalItemsPrice = parsed[id].totalItemsPrice || 0;
+                        tables[id].timerInterval = null;
+                    }
+                }
+            } catch(e) {}
+        }
+        const savedHistory = localStorage.getItem("billiard_history");
+        if (savedHistory) {
+            try {
+                history = JSON.parse(savedHistory);
+            } catch(e) { history = []; }
         }
     }
 
-    // ======================== Chức năng tải file (Blob + download) ============
-    async function downloadFileFromUrl(fileUrl, fileName, mimeType = null) {
-        if (!fileUrl) {
-            alert("⚠️ Không có URL hợp lệ để tải.");
+    function saveTables() {
+        const toSave = {};
+        for (let id in tables) {
+            toSave[id] = {
+                status: tables[id].status,
+                startTime: tables[id].startTime,
+                items: tables[id].items,
+                totalItemsPrice: tables[id].totalItemsPrice
+            };
+        }
+        localStorage.setItem("billiard_tables", JSON.stringify(toSave));
+    }
+
+    function saveHistory() {
+        localStorage.setItem("billiard_history", JSON.stringify(history));
+    }
+
+    // ================== TIMER ==================
+    function updateTimerDisplay(tableId) {
+        const table = tables[tableId];
+        if (table.status !== "playing" || !table.startTime) return;
+        const now = Date.now();
+        const elapsedMs = now - table.startTime;
+        const totalSeconds = Math.floor(elapsedMs / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        const timerStr = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        const timerElem = document.getElementById(`timer-${tableId}`);
+        if (timerElem) timerElem.innerText = timerStr;
+        
+        const estAmount = getExactHours(table.startTime, now) * HOURLY_RATE;
+        const priceHintElem = document.getElementById(`price-hint-${tableId}`);
+        if (priceHintElem) priceHintElem.innerText = `(ước tính: ${Math.round(estAmount).toLocaleString('vi-VN')}đ)`;
+    }
+
+    function startTimerForTable(tableId) {
+        if (tables[tableId].timerInterval) clearInterval(tables[tableId].timerInterval);
+        tables[tableId].timerInterval = setInterval(() => updateTimerDisplay(tableId), 1000);
+        updateTimerDisplay(tableId);
+    }
+
+    function stopTimerForTable(tableId) {
+        if (tables[tableId].timerInterval) {
+            clearInterval(tables[tableId].timerInterval);
+            tables[tableId].timerInterval = null;
+        }
+    }
+
+    // ================== XỬ LÝ MÓN ==================
+    function addItemCustom(tableId) {
+        const nameInput = document.getElementById(`item-name-${tableId}`);
+        const priceInput = document.getElementById(`item-price-${tableId}`);
+        const name = nameInput.value.trim();
+        let price = parseInt(priceInput.value);
+        if (!name) return alert("Vui lòng nhập tên món");
+        if (isNaN(price) || price <= 0) price = 0;
+        tables[tableId].items.push({ name, price });
+        tables[tableId].totalItemsPrice += price;
+        saveTables();
+        renderTables();
+    }
+
+    function addPresetItem(tableId) {
+        const select = document.getElementById(`preset-item-${tableId}`);
+        const val = select.value;
+        if (!val || val === "0") return;
+        const [name, priceStr] = val.split(',');
+        const price = parseInt(priceStr);
+        if (name && !isNaN(price)) {
+            tables[tableId].items.push({ name, price });
+            tables[tableId].totalItemsPrice += price;
+            saveTables();
+            renderTables();
+        }
+        select.value = "0";
+    }
+
+    function deleteItem(tableId, index) {
+        const item = tables[tableId].items[index];
+        if (item) {
+            tables[tableId].totalItemsPrice -= item.price;
+            tables[tableId].items.splice(index, 1);
+            saveTables();
+            renderTables();
+        }
+    }
+
+    // ================== BẮT ĐẦU BÀN ==================
+    function startGame(tableId) {
+        if (tables[tableId].status === "playing") return;
+        tables[tableId].status = "playing";
+        tables[tableId].startTime = Date.now();
+        tables[tableId].items = [];
+        tables[tableId].totalItemsPrice = 0;
+        saveTables();
+        stopTimerForTable(tableId);
+        startTimerForTable(tableId);
+        renderTables();
+    }
+
+    // ================== KẾT THÚC BÀN & HIỂN THỊ MODAL CHỌN PHƯƠNG THỨC ==================
+    function endGame(tableId) {
+        const table = tables[tableId];
+        if (table.status !== "playing" || !table.startTime) {
+            alert("Bàn chưa được bắt đầu!");
             return;
         }
-        try {
-            // Hiển thị thông báo đang tải
-            const loadingToast = document.createElement('div');
-            loadingToast.innerText = '⏳ Đang tải xuống, vui lòng đợi...';
-            loadingToast.style.position = 'fixed';
-            loadingToast.style.bottom = '20px';
-            loadingToast.style.left = '50%';
-            loadingToast.style.transform = 'translateX(-50%)';
-            loadingToast.style.backgroundColor = '#0f172ad9';
-            loadingToast.style.color = '#c3e2ff';
-            loadingToast.style.padding = '10px 20px';
-            loadingToast.style.borderRadius = '40px';
-            loadingToast.style.fontSize = '0.85rem';
-            loadingToast.style.zIndex = '9999';
-            loadingToast.style.backdropFilter = 'blur(8px)';
-            loadingToast.style.border = '1px solid #2c7be5';
-            document.body.appendChild(loadingToast);
+        const endTime = Date.now();
+        const startTimestamp = table.startTime;
+        const exactHours = getExactHours(startTimestamp, endTime);
+        const priceHours = exactHours * HOURLY_RATE;
+        const totalItems = table.totalItemsPrice;
+        const totalRaw = priceHours + totalItems;
+        const totalRounded = roundMoney(totalRaw);
 
-            const response = await fetch(fileUrl);
-            if (!response.ok) throw new Error(`Tải thất bại: ${response.status}`);
-            const blob = await response.blob();
-            const blobUrl = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(blobUrl);
-            
-            loadingToast.innerText = '✅ Tải xong!';
-            setTimeout(() => {
-                if (loadingToast.parentNode) loadingToast.remove();
-            }, 1800);
-        } catch (err) {
-            alert(`❌ Lỗi khi tải file: ${err.message}`);
-            console.error(err);
-            const toast = document.querySelector('#loadingToastTemp');
-            if(toast) toast.remove();
-        }
-    }
+        const startDate = new Date(startTimestamp).toLocaleString('vi-VN');
+        const endDate = new Date(endTime).toLocaleString('vi-VN');
 
-    // ================ Hiển thị giao diện thông tin và nút tải =================
-    function renderVideoInfo(videoInfo, originalUrl) {
-        const resultDiv = document.getElementById('resultArea');
-        if (!resultDiv) return;
-
-        // Định dạng thời lượng (giây -> mm:ss)
-        const formatDuration = (sec) => {
-            if (!sec && sec !== 0) return '--';
-            const minutes = Math.floor(sec / 60);
-            const seconds = Math.floor(sec % 60);
-            return `${minutes}:${seconds.toString().padStart(2,'0')}`;
+        const invoice = {
+            tableId,
+            tableName: table.name,
+            startTime: startTimestamp,
+            endTime,
+            startDate,
+            endDate,
+            hours: exactHours,
+            priceHours,
+            itemsTotal: totalItems,
+            totalRaw,
+            total: totalRounded,
+            items: [...table.items]
         };
 
-        const durationFormatted = formatDuration(videoInfo.duration);
-        const viewCount = videoInfo.play_count ? videoInfo.play_count.toLocaleString() : 'N/A';
-        const likeCount = videoInfo.digg_count ? videoInfo.digg_count.toLocaleString() : 'N/A';
+        // Hiển thị modal chọn phương thức thanh toán
+        showPaymentMethodModal(invoice);
+    }
 
-        // Tạo HTML hiển thị
-        const html = `
-            <div class="info-card">
-                <div class="video-preview">
-                    <div class="thumbnail">
-                        <img src="${videoInfo.cover || 'https://via.placeholder.com/100x178?text=No+Cover'}" alt="thumbnail" onerror="this.src='https://via.placeholder.com/100x178?text=TikTok'">
-                    </div>
-                    <div class="video-details">
-                        <div class="video-title">🎥 ${escapeHtml(videoInfo.title.substring(0, 90))}${videoInfo.title.length > 90 ? '...' : ''}</div>
-                        <div class="video-meta">
-                            <span class="meta-badge">👤 ${escapeHtml(videoInfo.author)}</span>
-                            <span class="meta-badge">⏱️ ${durationFormatted}</span>
-                            <span class="meta-badge">👁️ ${viewCount}</span>
-                            <span class="meta-badge">❤️ ${likeCount}</span>
-                        </div>
-                        <div class="video-meta" style="margin-top: 5px;">
-                            <span class="meta-badge">🎵 ${videoInfo.music_url ? 'Nhạc nền có sẵn' : 'Chỉ video (không có audio riêng)'}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="download-section">
-                <div class="download-title">📥 LỰA CHỌN TẢI XUỐNG</div>
-                <div class="download-buttons">
-                    <button class="dl-btn btn-video" id="downloadMp4Btn">🎬 Tải Video (MP4)</button>
-                    <button class="dl-btn btn-mov" id="downloadMovBtn">📽️ Tải .mov</button>
-                    <button class="dl-btn btn-mp3" id="downloadMp3Btn" ${!videoInfo.music_url ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>🎧 Tải file .mp3</button>
-                </div>
-                ${!videoInfo.music_url ? '<div style="font-size: 0.7rem; text-align:center; margin-top: 8px; color:#95b9dc;">⚠️ Video này không có nhạc nền riêng, chỉ tải video.</div>' : ''}
-            </div>
-        `;
-        resultDiv.innerHTML = html;
-        resultDiv.style.display = 'block';
-
-        // Xử lý sự kiện nút tải MP4 (video gốc)
-        const mp4Btn = document.getElementById('downloadMp4Btn');
-        if (mp4Btn) {
-            mp4Btn.addEventListener('click', () => {
-                const videoUrl = videoInfo.video_url;
-                if (!videoUrl) return alert('Không tìm thấy link video.');
-                const fileName = `TikTok_${videoInfo.author}_${Date.now()}.mp4`;
-                downloadFileFromUrl(videoUrl, fileName, 'video/mp4');
-            });
+    function showPaymentMethodModal(invoice) {
+        const modal = document.getElementById("paymentMethodModal");
+        const detailsDiv = document.getElementById("invoiceDetails");
+        // Tạo nội dung hóa đơn
+        let html = `<p><strong>${invoice.tableName}</strong></p>`;
+        html += `<p>⏱️ Thời gian chơi: ${invoice.hours.toFixed(2)} giờ</p>`;
+        html += `<p>💰 Tiền giờ: ${Math.round(invoice.priceHours).toLocaleString('vi-VN')}đ</p>`;
+        html += `<p>🍽️ Đồ uống/ăn: ${Math.round(invoice.itemsTotal).toLocaleString('vi-VN')}đ</p>`;
+        if (invoice.totalRaw !== invoice.total) {
+            html += `<p>📉 Tổng gốc: ${Math.round(invoice.totalRaw).toLocaleString('vi-VN')}đ</p>`;
+            html += `<p>🔄 Làm tròn (dưới 500đ → xuống, ≥500đ → lên): <strong>${invoice.total.toLocaleString('vi-VN')}đ</strong></p>`;
+        } else {
+            html += `<p><strong>Tổng tiền: ${invoice.total.toLocaleString('vi-VN')}đ</strong></p>`;
         }
+        detailsDiv.innerHTML = html;
+        pendingInvoice = invoice;
+        modal.style.display = "flex";
+    }
 
-        // Tải .mov - thực chất vẫn là file mp4 nhưng đuôi .mov (theo yêu cầu)
-        const movBtn = document.getElementById('downloadMovBtn');
-        if (movBtn) {
-            movBtn.addEventListener('click', () => {
-                const videoUrl = videoInfo.video_url;
-                if (!videoUrl) return alert('Không có link video.');
-                const fileName = `TikTok_${videoInfo.author}_${Date.now()}.mov`;
-                // Gọi tải với cùng blob video nhưng đuôi .mov
-                downloadFileFromUrl(videoUrl, fileName, 'video/quicktime');
-            });
-        }
-
-        // Tải MP3 (audio)
-        const mp3Btn = document.getElementById('downloadMp3Btn');
-        if (mp3Btn && videoInfo.music_url) {
-            mp3Btn.addEventListener('click', () => {
-                const musicUrl = videoInfo.music_url;
-                if (!musicUrl) {
-                    alert('Không tìm thấy link nhạc nền cho video này.');
-                    return;
-                }
-                const fileName = `audio_${videoInfo.author}_${Date.now()}.mp3`;
-                downloadFileFromUrl(musicUrl, fileName, 'audio/mpeg');
-            });
-        } else if (mp3Btn && !videoInfo.music_url) {
-            mp3Btn.title = "Video này không có nhạc nền riêng biệt";
+    function handleCashPayment() {
+        if (pendingInvoice) {
+            finalizePayment(pendingInvoice, "Tiền mặt");
+            closePaymentMethodModal();
         }
     }
 
-    // Helper chống XSS đơn giản
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
+    function handleQRPayment() {
+        if (pendingInvoice) {
+            closePaymentMethodModal();
+            showQRPayment(pendingInvoice);
+        }
+    }
+
+    function closePaymentMethodModal() {
+        document.getElementById("paymentMethodModal").style.display = "none";
+        pendingInvoice = null;
+    }
+
+    // ================== QR BANK ==================
+    function showQRPayment(invoice) {
+        const amount = Math.round(invoice.total);
+        const addInfo = `TIEN BAN ${invoice.tableId}`;
+        const encodedAccount = encodeURIComponent(ACCOUNT_NAME);
+        const encodedAddInfo = encodeURIComponent(addInfo);
+        const qrUrl = `https://img.vietqr.io/image/${BANK_BIN}-${BANK_ACCOUNT}-qr_only.jpg?accountName=${encodedAccount}&amount=${amount}&addInfo=${encodedAddInfo}`;
+        
+        const modal = document.getElementById("qrModal");
+        const qrImg = document.getElementById("qrCodeImage");
+        const qrAmountSpan = document.getElementById("qrAmountText");
+        qrAmountSpan.innerText = `💸 Số tiền: ${amount.toLocaleString('vi-VN')}đ\n📝 Nội dung: ${addInfo}`;
+        qrImg.src = qrUrl;
+        modal.style.display = "flex";
+        window.qrInvoice = invoice;
+    }
+
+    function finalizePayment(invoice, method) {
+        const record = {
+            id: Date.now(),
+            table: invoice.tableName,
+            start: invoice.startDate,
+            end: invoice.endDate,
+            hours: invoice.hours.toFixed(2),
+            priceHours: invoice.priceHours,
+            itemsTotal: invoice.itemsTotal,
+            total: invoice.total,
+            method,
+            timestamp: new Date().toISOString()
+        };
+        history.unshift(record);
+        saveHistory();
+        renderHistory();
+
+        // Reset bàn
+        const tableId = invoice.tableId;
+        stopTimerForTable(tableId);
+        tables[tableId].status = "free";
+        tables[tableId].startTime = null;
+        tables[tableId].items = [];
+        tables[tableId].totalItemsPrice = 0;
+        saveTables();
+        renderTables();
+    }
+
+    // ================== RENDER GIAO DIỆN ==================
+    function renderTables() {
+        const grid = document.getElementById("tablesGrid");
+        grid.innerHTML = "";
+        for (let i = 1; i <= 3; i++) {
+            const t = tables[i];
+            const isPlaying = t.status === "playing";
+            const statusText = isPlaying ? "🟠 Đang chơi" : "🟢 Trống";
+            const statusClass = isPlaying ? "playing" : "";
+            const totalItemsPrice = t.totalItemsPrice || 0;
+
+            let itemsHtml = `<div class="items-list">`;
+            if (t.items.length === 0) {
+                itemsHtml += `<div class="item-row" style="color:#888;">Chưa có đồ uống/ăn</div>`;
+            } else {
+                t.items.forEach((item, idx) => {
+                    itemsHtml += `
+                        <div class="item-row">
+                            <span class="item-name">${escapeHtml(item.name)}</span>
+                            <span class="item-price">${item.price.toLocaleString('vi-VN')}đ</span>
+                            <button class="delete-item" data-table="${i}" data-index="${idx}">🗑</button>
+                        </div>
+                    `;
+                });
+            }
+            itemsHtml += `</div>`;
+            itemsHtml += `<div class="total-extra">🍽️ Tổng đồ: ${totalItemsPrice.toLocaleString('vi-VN')}đ</div>`;
+
+            const addItemHtml = `
+                <div class="add-item-bar">
+                    <input type="text" id="item-name-${i}" placeholder="Tên món (vd: Bia)" />
+                    <input type="number" id="item-price-${i}" placeholder="Giá" value="20000" step="1000" />
+                    <button class="btn-sm" data-table="${i}" id="addItemBtn-${i}">➕ Thêm</button>
+                </div>
+                <div class="add-item-bar" style="margin-top:6px;">
+                    <select id="preset-item-${i}">
+                        <option value="0">-- Món gợi ý --</option>
+                        <option value="Nước ngọt,20000">🥤 Nước ngọt 20k</option>
+                        <option value="Bia Hà Nội,30000">🍺 Bia 30k</option>
+                        <option value="Trà đá,10000">🍵 Trà đá 10k</option>
+                        <option value="Mì tôm,25000">🍜 Mì tôm 25k</option>
+                        <option value="Snack,15000">🍟 Snack 15k</option>
+                    </select>
+                    <button class="btn-sm" data-table="${i}" id="presetAddBtn-${i}">➕ Thêm gợi ý</button>
+                </div>
+            `;
+
+            const timerDisplay = isPlaying && t.startTime ? 
+                `<div class="timer-display" id="timer-${i}">--:--:--</div>
+                 <div class="price-info" id="price-hint-${i}"></div>` 
+                : `<div class="timer-display">--:--:--</div><div class="price-info">Chưa bắt đầu</div>`;
+
+            const actionButtons = !isPlaying ? 
+                `<button class="btn-start" data-table="${i}" id="startBtn-${i}">🎱 BẮT ĐẦU CHƠI</button>` :
+                `<button class="btn-end" data-table="${i}" id="endBtn-${i}">⏹️ KẾT THÚC & TÍNH TIỀN</button>`;
+
+            const cardHtml = `
+                <div class="table-card">
+                    <div class="table-header">
+                        <span class="table-name">${t.name}</span>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="timer-section">
+                            ${timerDisplay}
+                        </div>
+                        ${itemsHtml}
+                        ${addItemHtml}
+                        <div class="action-buttons">
+                            ${actionButtons}
+                        </div>
+                    </div>
+                </div>
+            `;
+            grid.insertAdjacentHTML('beforeend', cardHtml);
+        }
+
+        // Gắn sự kiện
+        for (let i = 1; i <= 3; i++) {
+            const startBtn = document.getElementById(`startBtn-${i}`);
+            const endBtn = document.getElementById(`endBtn-${i}`);
+            if (startBtn) startBtn.addEventListener('click', () => startGame(i));
+            if (endBtn) endBtn.addEventListener('click', () => endGame(i));
+
+            const addBtn = document.getElementById(`addItemBtn-${i}`);
+            if (addBtn) addBtn.addEventListener('click', () => addItemCustom(i));
+            const presetAdd = document.getElementById(`presetAddBtn-${i}`);
+            if (presetAdd) presetAdd.addEventListener('click', () => addPresetItem(i));
+
+            const deleteBtns = document.querySelectorAll(`.delete-item[data-table="${i}"]`);
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = parseInt(btn.getAttribute('data-index'));
+                    deleteItem(i, idx);
+                });
+            });
+        }
+
+        // Khởi động timer cho bàn đang chơi
+        for (let i = 1; i <= 3; i++) {
+            if (tables[i].status === "playing" && tables[i].startTime && !tables[i].timerInterval) {
+                startTimerForTable(i);
+            } else if (tables[i].status === "playing" && tables[i].timerInterval) {
+                updateTimerDisplay(i);
+            }
+        }
+    }
+
+    function renderHistory() {
+        const tbody = document.getElementById("historyBody");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+        if (history.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Chưa có giao dịch</td></tr>`;
+            return;
+        }
+        history.forEach(h => {
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = h.table;
+            row.insertCell(1).innerText = h.start;
+            row.insertCell(2).innerText = h.end;
+            row.insertCell(3).innerText = `${h.hours} giờ`;
+            row.insertCell(4).innerText = Math.round(h.priceHours).toLocaleString('vi-VN') + "đ";
+            row.insertCell(5).innerText = Math.round(h.itemsTotal).toLocaleString('vi-VN') + "đ";
+            row.insertCell(6).innerText = Math.round(h.total).toLocaleString('vi-VN') + "đ";
+            row.insertCell(7).innerText = h.method;
         });
     }
 
-    // Xử lý logic chính: nhập url -> fetch -> hiển thị
-    async function handleFetchVideo() {
-        const urlInput = document.getElementById('tiktokUrl');
-        const rawUrl = urlInput.value.trim();
-        if (!rawUrl) {
-            alert('Vui lòng nhập link TikTok!');
-            return;
-        }
-        if (!isTikTokUrl(rawUrl)) {
-            alert('❌ Link không hợp lệ. Vui lòng nhập link TikTok (tiktok.com hoặc vt.tiktok.com)');
-            return;
-        }
-
-        // UI loading
-        const loadingDiv = document.getElementById('loadingIndicator');
-        const resultArea = document.getElementById('resultArea');
-        resultArea.style.display = 'none';
-        loadingDiv.style.display = 'flex';
-        
-        // Xóa kết quả cũ
-        resultArea.innerHTML = '';
-
-        try {
-            const videoInfo = await fetchTikTokVideoInfo(rawUrl);
-            // Kiểm tra dữ liệu bắt buộc
-            if (!videoInfo.video_url) throw new Error('API không trả về link video.');
-            
-            // Lưu ý: nếu music_url null thì vẫn ok
-            renderVideoInfo(videoInfo, rawUrl);
-        } catch (error) {
-            console.error(error);
-            resultArea.style.display = 'block';
-            resultArea.innerHTML = `
-                <div class="error-message">
-                    ⚠️ ${escapeHtml(error.message)} <br>
-                    Hãy thử lại với link công khai hoặc kiểm tra định dạng TikTok.
-                </div>
-            `;
-        } finally {
-            loadingDiv.style.display = 'none';
+    function clearHistory() {
+        if (confirm("Xóa toàn bộ lịch sử thanh toán?")) {
+            history = [];
+            saveHistory();
+            renderHistory();
         }
     }
 
-    // Thêm sự kiện cho nút lấy thông tin
-    document.getElementById('fetchBtn').addEventListener('click', handleFetchVideo);
-    // Cho phép nhấn Enter trên input
-    const urlInput = document.getElementById('tiktokUrl');
-    urlInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleFetchVideo();
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+    }
+
+    // ================== MODAL HANDLERS ==================
+    function closeQrModal() {
+        document.getElementById("qrModal").style.display = "none";
+        window.qrInvoice = null;
+    }
+
+    document.getElementById("cashPaymentBtn")?.addEventListener("click", handleCashPayment);
+    document.getElementById("qrPaymentBtn")?.addEventListener("click", handleQRPayment);
+    document.getElementById("closeMethodModal")?.addEventListener("click", closePaymentMethodModal);
+    document.getElementById("confirmQrPayment")?.addEventListener("click", () => {
+        if (window.qrInvoice) {
+            finalizePayment(window.qrInvoice, "QR Bank (VietQR)");
+            closeQrModal();
+        } else {
+            closeQrModal();
         }
     });
+    document.getElementById("closeQrModal")?.addEventListener("click", closeQrModal);
+    document.getElementById("clearHistoryBtn")?.addEventListener("click", clearHistory);
 
-    // Hỗ trợ ví dụ mẫu (demo friendly)
-    const exampleLink = "https://www.tiktok.com/@tiktok/video/7123456789012345678";
-    urlInput.placeholder = "Ví dụ: https://vt.tiktok.com/xxxx hoặc https://www.tiktok.com/@user/video/...";
+    // ================== KHỞI TẠO ==================
+    loadData();
+    renderTables();
+    renderHistory();
+
+    window.addEventListener("beforeunload", () => {
+        for (let i = 1; i <= 3; i++) {
+            if (tables[i].timerInterval) clearInterval(tables[i].timerInterval);
+        }
+        saveTables();
+    });
 </script>
 </body>
 </html>
