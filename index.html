@@ -6,9 +6,6 @@
     <title>Quản lý Quán Bi-a | Bida Pro</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- jsPDF & autoTable -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -336,8 +333,8 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1><i class="fas fa-crown"></i> QUẢN LÝ BI-A PRO BY DUY HOANG <i class="fas fa-table-tennis"></i></h1>
-        <p>Quản lý bàn bi-a | Được xây dựng bởi Duy Hoang</p>
+        <h1><i class="fas fa-crown"></i> QUẢN LÝ BÀN BIDA PRO <i class="fas fa-table-tennis"></i></h1>
+        <p>Quản lý bàn bida | tính tiền chính xác | lưu lịch sử | có thống kê | tạo QR Bank nhanh</p>
     </div>
 
     <div class="tables-grid" id="tablesGrid"></div>
@@ -348,7 +345,7 @@
             <button class="tab-btn" data-tab="statsTab">📊 Thống kê doanh thu</button>
         </div>
         <div id="historyTab" class="tab-pane active">
-            <button id="exportPdfBtn" class="export-btn"><i class="fas fa-file-pdf"></i> Xuất PDF thống kê</button>
+            <button id="exportTxtBtn" class="export-btn"><i class="fas fa-file-alt"></i> Xuất TXT thống kê</button>
             <div style="overflow-x: auto;">
                 <table id="historyTable">
                     <thead>
@@ -363,7 +360,7 @@
             <canvas id="revenueChart" width="400" height="200" style="background:#fff; border-radius: 24px; max-width:100%;"></canvas>
         </div>
     </div>
-    <footer>⚡  WEB QUẢN LÝ & TÍNH GIỜ CHO BI-A ĐƯỢC DUY HOANG XÂY DỰNG VÀ PHÁT TRIỂN</footer>
+    <footer>⚡  WEB ĐƯỢC XÂY DỰNG RA ĐỂ QUẢN LÝ & TÍNH TIỀN CHO CÁC QUÁN BIDA | XÂY DỰNG VÀ PHÁT TRIỂN : DUY HOANG | MỌI THẮC MẮC LIÊN HỆ ZALO: 0385933633 (STK: 015223 - DO LE DUY HOANG)</footer>
 </div>
 
 <!-- Modal Thêm đồ uống/đồ ăn -->
@@ -456,9 +453,7 @@
             try {
                 const parsed = JSON.parse(storedTables);
                 if (Array.isArray(parsed) && parsed.length === 3) {
-                    // Khôi phục nhưng phải reset interval vì không lưu được interval
                     tables = parsed.map(t => ({ ...t, timerInterval: null }));
-                    // Nếu bàn đang playing, khởi động lại timer
                     tables.forEach(t => {
                         if (t.status === "playing" && t.startTime) {
                             startTimerForTable(t.id);
@@ -476,7 +471,6 @@
     }
 
     function saveTablesToStorage() {
-        // Không lưu interval
         const toSave = tables.map(t => {
             const { timerInterval, ...rest } = t;
             return rest;
@@ -515,7 +509,6 @@
             currentSeconds = Math.floor((Date.now() - table.startTime) / 1000);
             currentPrice = calculatePriceFromSeconds(currentSeconds);
         } else if (table.status === "ended") {
-            // Giả sử đã kết thúc nhưng chưa thanh toán, vẫn hiển thị giá cuối
             if (table.endTime && table.startTime) {
                 currentSeconds = Math.floor((table.endTime - table.startTime) / 1000);
                 currentPrice = calculatePriceFromSeconds(currentSeconds);
@@ -523,7 +516,6 @@
         }
         const totalDisplay = (isPlaying ? currentPrice : (table.finalTotal || 0)) + table.totalItemsPrice;
         
-        // Cập nhật timer và giá
         const timerDiv = card.querySelector('.timer-display');
         if (timerDiv) timerDiv.innerText = formatTimeFromSeconds(currentSeconds);
         const priceDiv = card.querySelector('.price-display');
@@ -531,7 +523,6 @@
         const totalDiv = card.querySelector('.total-amount');
         if (totalDiv) totalDiv.innerText = `🧾 Tổng tạm tính: ${totalDisplay.toLocaleString()}đ`;
         
-        // Cập nhật danh sách items
         const itemsContainer = card.querySelector('.items-list');
         if (itemsContainer) {
             if (table.items.length) {
@@ -550,14 +541,12 @@
             if (table.status === "playing") {
                 updateTableUI(tableId);
             } else {
-                // Nếu không còn playing, dừng interval
                 if (table.timerInterval) {
                     clearInterval(table.timerInterval);
                     table.timerInterval = null;
                 }
             }
         }, 1000);
-        // Cập nhật ngay
         updateTableUI(tableId);
     }
 
@@ -596,7 +585,6 @@
             container.appendChild(card);
         }
 
-        // Gắn sự kiện
         document.querySelectorAll('.start-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = parseInt(btn.dataset.id);
@@ -628,7 +616,7 @@
         table.finalTotal = null;
         saveTablesToStorage();
         startTimerForTable(tableId);
-        renderTables(); // render lại để cập nhật button và giao diện (interval vẫn chạy riêng)
+        renderTables();
     }
 
     function openAddItemModal(tableId) {
@@ -668,7 +656,6 @@
         const table = tables.find(t => t.id === tableId);
         if (!table || table.status !== "playing") return;
         
-        // Dừng timer
         if (table.timerInterval) {
             clearInterval(table.timerInterval);
             table.timerInterval = null;
@@ -680,7 +667,6 @@
         const priceTime = calculatePriceFromSeconds(secondsPlayed);
         const totalAmount = priceTime + table.totalItemsPrice;
         
-        // Lưu tạm để hiển thị modal thanh toán
         currentPendingTable = {
             tableId: table.id,
             startTime: start,
@@ -692,7 +678,6 @@
             totalAmount: totalAmount
         };
         
-        // Hiển thị modal chọn phương thức
         const modal = document.getElementById("paymentMethodModal");
         document.getElementById("paymentTableId").innerText = table.id;
         const summaryDiv = document.getElementById("paymentSummary");
@@ -705,7 +690,6 @@
         modal.style.display = "flex";
     }
     
-    // Xử lý thanh toán tiền mặt
     function handleCashPayment() {
         if (!currentPendingTable) return;
         finalizePayment(currentPendingTable, "Tiền mặt");
@@ -713,7 +697,6 @@
         currentPendingTable = null;
     }
     
-    // Xử lý QR Bank
     function handleQRPayment() {
         if (!currentPendingTable) return;
         const { totalAmount, startTime, tableId, secondsPlayed, priceTime } = currentPendingTable;
@@ -733,10 +716,8 @@
         document.getElementById("qrInfo").innerHTML = `Số tiền: ${amountInt.toLocaleString()}đ<br>Nội dung: ${noteContent}<br>Quét QR bằng MB Bank hoặc app ngân hàng`;
         document.getElementById("qrModal").style.display = "flex";
         
-        // Đóng modal chọn phương thức
         document.getElementById("paymentMethodModal").style.display = "none";
         
-        // Gắn sự kiện xác nhận QR
         const confirmBtn = document.getElementById("confirmPaymentAfterQrBtn");
         const closeBtn = document.getElementById("closeQrBtn");
         const confirmHandler = () => {
@@ -748,16 +729,9 @@
         const closeHandler = () => {
             document.getElementById("qrModal").style.display = "none";
             cleanupQrEvents();
-            // Nếu đóng mà chưa xác nhận, hỏi lại? Ở đây ta cho phép hủy và trả bàn về trạng thái playing? Không, vì đã kết thúc rồi.
-            // Nhưng để an toàn, ta có thể reset lại bàn về idle? Không, vì đã tính tiền xong. Nhưng nếu hủy QR thì bàn đang ở trạng thái kết thúc, ta nên cho phép quay lại?
-            // Ở đây ta đơn giản: nếu đóng mà chưa xác nhận, ta sẽ hủy bỏ thanh toán, và bàn vẫn ở trạng thái "ended"? Cần xử lý:
-            // Nếu đóng mà chưa xác nhận, ta sẽ reset bàn về playing? Nhưng vì đã dừng timer rồi, cần khôi phục. Để đơn giản, ta cho phép hủy và khôi phục bàn về playing.
-            // Tuy nhiên để tránh phức tạp, ta cho phép hủy và quay lại modal chọn phương thức.
             document.getElementById("paymentMethodModal").style.display = "flex";
-            // Khôi phục timer cho bàn
             const table = tables.find(t => t.id === currentPendingTable.tableId);
             if (table && table.status === "playing") {
-                // Nếu đã dừng timer, khởi động lại
                 startTimerForTable(table.id);
             }
             currentPendingTable = null;
@@ -789,7 +763,6 @@
         historyPayments.unshift(record);
         saveHistoryToStorage();
         
-        // Reset bàn
         const table = tables.find(t => t.id === tableId);
         if (table) {
             table.status = "idle";
@@ -804,7 +777,7 @@
             }
         }
         saveTablesToStorage();
-        renderTables(); // render lại toàn bộ
+        renderTables();
         renderHistoryAndStats();
         alert(`Thanh toán thành công! Bàn ${tableId} đã được giải phóng.`);
     }
@@ -830,7 +803,6 @@
             `;
         }
 
-        // Thống kê
         const statsDiv = document.getElementById("statsSummary");
         const today = new Date();
         const firstDayMonth = new Date(today.getFullYear(), today.getMonth(), 1).getTime();
@@ -903,6 +875,30 @@
         });
     }
 
+    // Hàm xuất TXT thay vì PDF
+    function exportStatisticsTXT() {
+        let content = "BÁO CÁO THỐNG KÊ QUÁN BIDA\n";
+        content += `Ngày xuất: ${new Date().toLocaleString()}\n\n`;
+        let totalRevenue = historyPayments.reduce((acc, h) => acc + h.total, 0);
+        content += `Tổng doanh thu toàn thời gian: ${totalRevenue.toLocaleString()} VNĐ\n\n`;
+        content += "DANH SÁCH GIAO DỊCH:\n";
+        content += "--------------------------------------------------------------------------------------------------------\n";
+        for (let h of historyPayments) {
+            const itemsStr = h.items.map(it => `${it.name}(${it.quantity})`).join(", ");
+            content += `Bàn ${h.tableId} | ${formatDateTime(h.startTime)} -> ${formatDateTime(h.endTime)} | Thời gian: ${formatTimeFromSeconds(h.durationSeconds)} | Tiền giờ: ${h.priceTime.toLocaleString()}đ | Đồ: ${itemsStr || "Không"} | Tổng: ${h.total.toLocaleString()}đ | PT: ${h.paymentMethod}\n`;
+        }
+        content += "--------------------------------------------------------------------------------------------------------\n";
+        const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = `ThongKe_Bida_${new Date().toISOString().slice(0,19)}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
     // Khởi tạo
     loadDataFromStorage();
     renderTables();
@@ -912,16 +908,14 @@
     // Event listeners
     document.getElementById("confirmItemBtn").addEventListener("click", confirmAddItem);
     document.getElementById("cancelItemBtn").addEventListener("click", closeAddItemModal);
-    document.getElementById("exportPdfBtn").addEventListener("click", exportStatisticsPDF);
+    document.getElementById("exportTxtBtn").addEventListener("click", exportStatisticsTXT);
     document.getElementById("cashPaymentBtn").addEventListener("click", handleCashPayment);
     document.getElementById("qrPaymentBtn").addEventListener("click", handleQRPayment);
     document.getElementById("cancelPaymentBtn").addEventListener("click", () => {
         document.getElementById("paymentMethodModal").style.display = "none";
-        // Nếu hủy, khôi phục lại bàn về playing (vì chưa thanh toán)
         if (currentPendingTable) {
             const table = tables.find(t => t.id === currentPendingTable.tableId);
             if (table && table.status === "playing") {
-                // Timer đã bị clear trong endTable, cần khởi động lại
                 startTimerForTable(table.id);
             }
             currentPendingTable = null;
@@ -932,7 +926,6 @@
         if (e.target === document.getElementById("addItemModal")) closeAddItemModal();
         if (e.target === document.getElementById("qrModal")) {
             document.getElementById("qrModal").style.display = "none";
-            // Nếu đóng QR mà chưa xác nhận, khôi phục modal chọn phương thức
             if (currentPendingTable) {
                 document.getElementById("paymentMethodModal").style.display = "flex";
                 const table = tables.find(t => t.id === currentPendingTable.tableId);
@@ -949,38 +942,6 @@
             }
         }
     });
-
-    async function exportStatisticsPDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF("landscape", "mm", "a4");
-        doc.setFontSize(18);
-        doc.text("BÁO CÁO THỐNG KÊ QUÁN BIDA", 105, 15, { align: "center" });
-        doc.setFontSize(10);
-        doc.text(`Ngày xuất: ${new Date().toLocaleString()}`, 105, 25, { align: "center" });
-        
-        let totalRevenue = historyPayments.reduce((acc, h) => acc + h.total, 0);
-        doc.text(`Tổng doanh thu toàn thời gian: ${totalRevenue.toLocaleString()} VNĐ`, 20, 35);
-        
-        const tableData = historyPayments.map(h => [
-            `Bàn ${h.tableId}`,
-            formatDateTime(h.startTime),
-            formatDateTime(h.endTime),
-            formatTimeFromSeconds(h.durationSeconds),
-            h.priceTime.toLocaleString()+"đ",
-            h.items.map(it=>`${it.name}(${it.quantity})`).join(", "),
-            h.total.toLocaleString()+"đ",
-            h.paymentMethod
-        ]);
-        doc.autoTable({
-            head: [["Bàn","Bắt đầu","Kết thúc","Thời gian","Tiền giờ","Đồ uống/ăn","Tổng","PT thanh toán"]],
-            body: tableData,
-            startY: 45,
-            theme: "striped",
-            styles: { fontSize: 8, cellPadding: 2 },
-            headStyles: { fillColor: [243, 179, 61], textColor: [0,0,0] }
-        });
-        doc.save(`ThongKe_Bida_${new Date().toISOString().slice(0,19)}.pdf`);
-    }
 </script>
 </body>
 </html>
