@@ -76,7 +76,6 @@
             justify-content: center;
         }
 
-        /* Header sang trọng */
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -118,7 +117,6 @@
             font-size: 0.9rem;
         }
 
-        /* THÔNG BÁO HẾT HẠN & NẠP TIỀN */
         .expiry-notice {
             background: linear-gradient(145deg, #2a1e12cc, #1e160ecc);
             backdrop-filter: blur(10px);
@@ -197,26 +195,6 @@
             font-size: 0.9rem;
             opacity: 0.8;
         }
-        .btn-renew-main {
-            background: #b87c1a;
-            border: none;
-            color: #2b1f0c;
-            padding: 16px 40px;
-            border-radius: 60px;
-            font-weight: bold;
-            font-size: 1.3rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-        }
-        .btn-renew-main:hover {
-            background: #d4952b;
-            transform: scale(1.02);
-        }
         .license-info {
             background: #00000055;
             border-radius: 40px;
@@ -281,6 +259,31 @@
             padding: 12px;
             margin: 15px 0;
         }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ffdd99;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 60px;
+            border: none;
+            background: #2d241b;
+            color: #ffefcf;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        .form-group input:focus {
+            background: #3f321f;
+            box-shadow: 0 0 0 2px #f3b33d;
+        }
         .btn-group {
             display: flex;
             flex-wrap: wrap;
@@ -322,8 +325,6 @@
         button.success:hover {
             background: #1f5522;
         }
-
-        /* Thông báo chờ admin */
         .waiting-message {
             background: #1e2a1ecc;
             border-left: 5px solid #ffcc66;
@@ -345,6 +346,10 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        .required {
+            color: #ff8866;
+            margin-left: 4px;
+        }
     </style>
 </head>
 <body>
@@ -357,7 +362,6 @@
         </div>
     </div>
 
-    <!-- Khu vực gia hạn chính - chỉ hiển thị thông báo hết hạn và các gói -->
     <div class="expiry-notice">
         <div class="expiry-icon"><i class="fas fa-hourglass-half"></i></div>
         <div class="expiry-title">⚠️ HẾT HẠN SỬ DỤNG ⚠️</div>
@@ -378,10 +382,6 @@
             </div>
         </div>
         
-        <div>
-            <button id="showCustomRenewBtn" class="btn-renew-main"><i class="fas fa-qrcode"></i> NẠP TIỀN GIA HẠN NGAY</button>
-        </div>
-        
         <div class="license-info">
             <span><i class="fas fa-clock"></i> Trạng thái: <strong style="color:#ffaa66;">HẾT HIỆU LỰC</strong></span>
             <span><i class="fas fa-credit-card"></i> Thanh toán qua QR MB Bank</span>
@@ -396,6 +396,30 @@
             <p>© 2026 Bida Pro Gold | Hệ thống gia hạn theo tháng</p>
         </div>
     </footer>
+</div>
+
+<!-- Modal nhập thông tin khách hàng (hiện ra sau khi chọn gói) -->
+<div id="infoModal" class="modal">
+    <div class="modal-content">
+        <h3><i class="fas fa-user-edit"></i> THÔNG TIN GIA HẠN</h3>
+        <p style="margin-bottom: 20px; font-size: 14px;">Vui lòng nhập thông tin để admin liên hệ xác nhận</p>
+        <div class="form-group">
+            <label>Họ và tên <span class="required">*</span></label>
+            <input type="text" id="fullName" placeholder="VD: Nguyễn Văn A" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại <span class="required">*</span></label>
+            <input type="tel" id="phoneNumber" placeholder="0987654321" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label>Gmail (không bắt buộc)</label>
+            <input type="email" id="email" placeholder="example@gmail.com" autocomplete="off">
+        </div>
+        <div class="btn-group">
+            <button id="cancelInfoBtn" class="danger"><i class="fas fa-times"></i> Hủy</button>
+            <button id="submitInfoBtn" class="primary"><i class="fas fa-arrow-right"></i> Tiếp tục thanh toán</button>
+        </div>
+    </div>
 </div>
 
 <!-- Modal QR thanh toán gia hạn -->
@@ -413,21 +437,21 @@
     </div>
 </div>
 
-<!-- Modal thông báo chờ admin kích hoạt -->
+<!-- Modal thông báo chờ admin kích hoạt + đã gửi telegram -->
 <div id="waitingModal" class="modal">
     <div class="modal-content">
         <div style="font-size: 4rem; color: #ffcc66; margin-bottom: 15px;">
-            <i class="fas fa-hourglass-half"></i>
+            <i class="fab fa-telegram"></i>
         </div>
-        <h3 style="color: #ffdd99; margin-bottom: 15px;">ĐANG XỬ LÝ YÊU CẦU</h3>
+        <h3 style="color: #ffdd99; margin-bottom: 15px;">ĐÃ GỬI YÊU CẦU GIA HẠN</h3>
         <div class="waiting-message">
             <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 15px;">
                 <div class="spinner"></div>
-                <span style="font-weight: bold;">Vui lòng chờ admin kích hoạt</span>
+                <span style="font-weight: bold;">Đang chờ admin xác nhận thanh toán</span>
             </div>
-            <p><i class="fas fa-clock"></i> Quý khách vui lòng chờ khoảng <strong style="color:#ffcc66;">5 phút</strong> để admin xác nhận thanh toán và mở lại web.</p>
-            <p style="margin-top: 12px; font-size: 0.9rem;">Sau khi admin kích hoạt, trang sẽ tự động tải lại và bạn có thể sử dụng đầy đủ chức năng.</p>
-            <p style="margin-top: 10px;"><i class="fas fa-phone-alt"></i> Liên hệ hỗ trợ: <strong>0385933633 / 0964493987</strong> (Admin)</p>
+            <p><i class="fas fa-clock"></i> Thông tin của bạn đã được gửi đến admin qua Telegram.</p>
+            <p>Vui lòng chờ khoảng <strong style="color:#ffcc66;">5 phút</strong> để admin xác nhận và kích hoạt lại web.</p>
+            <p style="margin-top: 12px; font-size: 0.9rem;"><i class="fas fa-check-circle"></i> Sau khi kích hoạt, trang sẽ tự động tải lại và bạn có thể sử dụng đầy đủ chức năng.</p>
         </div>
         <div class="btn-group" style="margin-top: 25px;">
             <button id="closeWaitingBtn" class="primary"><i class="fas fa-check"></i> Đóng</button>
@@ -436,69 +460,158 @@
 </div>
 
 <script>
+    // ------------------- CẤU HÌNH TELEGRAM ------------------
+    const BOT_TOKEN = "8743295178:AAGxqj0jHU88uzg_uXqv_e-mwZzF1em8cjM";
+    const CHAT_ID = "6286372153";
+    
     // ------------------- CẤU HÌNH NGÂN HÀNG ------------------
     const BANK_BIN = "970422";
     const ACCOUNT_NO = "015223";
     const ACCOUNT_NAME = "DO LE DUY HOANG";
     
-    // Biến lưu thông tin gói đang chọn
-    let currentRenewPackage = { months: 1, amount: 100000 };
+    // Biến lưu thông tin gói đang chọn và thông tin khách
+    let currentSelectedPackage = { months: 1, amount: 100000 };
+    let currentCustomerInfo = { fullName: "", phone: "", email: "" };
     
-    // Hàm tạo QR theo số tiền và số tháng
-    function generateRenewQR(months, amount) {
+    // Hàm gửi thông báo đến Telegram
+    async function sendTelegramNotification(packageInfo, customerInfo, transactionNote) {
+        const message = `🔔 *YÊU CẦU GIA HẠN WEB BIDA PRO GOLD* 🔔\n\n` +
+                        `👤 *Họ tên:* ${customerInfo.fullName}\n` +
+                        `📞 *Số điện thoại:* ${customerInfo.phone}\n` +
+                        `📧 *Email:* ${customerInfo.email || "Không cung cấp"}\n` +
+                        `📦 *Gói gia hạn:* ${packageInfo.months} tháng\n` +
+                        `💰 *Số tiền:* ${packageInfo.amount.toLocaleString()}đ\n` +
+                        `🏦 *Ngân hàng:* MB Bank - STK 015223\n` +
+                        `📝 *Nội dung chuyển khoản:* ${transactionNote}\n` +
+                        `⏰ *Thời gian yêu cầu:* ${new Date().toLocaleString('vi-VN')}\n\n` +
+                        `✅ *Vui lòng kiểm tra thanh toán và kích hoạt web cho khách hàng.*`;
+        
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        const payload = {
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: "Markdown"
+        };
+        
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (!result.ok) {
+                console.error("Telegram error:", result);
+            } else {
+                console.log("Đã gửi thông báo thành công đến Telegram");
+            }
+        } catch (error) {
+            console.error("Lỗi gửi Telegram:", error);
+        }
+    }
+    
+    // Hàm tạo QR và lưu thông tin, sau đó gửi telegram khi xác nhận
+    function generateRenewQR(months, amount, customer) {
         const note = `NAP GIA HAN WEB BIA PRO ${months} THANG`;
         const encodedNote = encodeURIComponent(note);
-        // Tạo URL QR code từ vietqr.io (ảnh tĩnh với thông tin)
         const qrUrl = `https://img.vietqr.io/image/${BANK_BIN}-${ACCOUNT_NO}-qr_only.jpg?accountName=${encodeURIComponent(ACCOUNT_NAME)}&amount=${amount}&addInfo=${encodedNote}`;
         const qrImg = document.getElementById("renewQrImg");
         qrImg.src = qrUrl;
         document.getElementById("renewQrInfo").innerHTML = `
             <i class="fas fa-receipt"></i> <strong>${months} tháng</strong> - ${amount.toLocaleString()}đ<br>
-            <i class="fas fa-comment-dots"></i> Nội dung: <strong style="color:#ffcc66;">${note}</strong><br>
+            <i class="fas fa-user"></i> Khách hàng: ${customer.fullName}<br>
+            <i class="fas fa-phone"></i> SĐT: ${customer.phone}<br>
+            <i class="fas fa-comment-dots"></i> Nội dung CK: <strong style="color:#ffcc66;">${note}</strong><br>
             <i class="fas fa-mobile-alt"></i> Quét QR bằng MB Bank hoặc app ngân hàng để thanh toán<br>
             <span style="font-size:12px;">Sau khi chuyển khoản, nhấn "Xác nhận đã thanh toán"</span>
         `;
         document.getElementById("qrRenewModal").style.display = "flex";
-        currentRenewPackage = { months, amount };
+        // Lưu thông tin hiện tại để dùng khi xác nhận
+        currentSelectedPackage = { months, amount };
+        currentCustomerInfo = { ...customer };
     }
     
-    // Hiển thị modal thông báo chờ admin (5 phút)
-    function showWaitingForAdmin() {
-        // Đóng modal QR nếu đang mở
+    // Xử lý sau khi submit thông tin (từ modal info)
+    function handleInfoSubmit() {
+        const fullName = document.getElementById("fullName").value.trim();
+        const phone = document.getElementById("phoneNumber").value.trim();
+        const email = document.getElementById("email").value.trim();
+        
+        if (!fullName) {
+            alert("Vui lòng nhập họ và tên");
+            return;
+        }
+        if (!phone) {
+            alert("Vui lòng nhập số điện thoại");
+            return;
+        }
+        // Validate sđt cơ bản
+        if (!/^[0-9]{9,12}$/.test(phone)) {
+            alert("Số điện thoại không hợp lệ (9-12 số)");
+            return;
+        }
+        
+        const customer = { fullName, phone, email };
+        // Đóng modal info
+        document.getElementById("infoModal").style.display = "none";
+        // Tạo QR với gói đã chọn và thông tin khách
+        generateRenewQR(currentSelectedPackage.months, currentSelectedPackage.amount, customer);
+    }
+    
+    // Hiển thị modal nhập thông tin khi chọn gói
+    function showInfoModal(months, amount) {
+        currentSelectedPackage = { months, amount };
+        // Reset form
+        document.getElementById("fullName").value = "";
+        document.getElementById("phoneNumber").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("infoModal").style.display = "flex";
+    }
+    
+    // Xác nhận thanh toán: gửi Telegram và hiển thị chờ admin
+    async function handleConfirmPayment() {
+        // Lấy thông tin từ QR modal (đã được lưu)
+        if (!currentCustomerInfo.fullName || !currentCustomerInfo.phone) {
+            alert("Thông tin khách hàng bị thiếu, vui lòng thử lại.");
+            document.getElementById("qrRenewModal").style.display = "none";
+            return;
+        }
+        
+        const noteContent = `NAP GIA HAN WEB BIA PRO ${currentSelectedPackage.months} THANG`;
+        
+        // Hiển thị loading nhẹ (tùy chọn)
+        const confirmBtn = document.getElementById("confirmRenewPaymentBtn");
+        const originalText = confirmBtn.innerHTML;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang gửi...';
+        confirmBtn.disabled = true;
+        
+        // Gửi thông báo đến Telegram
+        await sendTelegramNotification(currentSelectedPackage, currentCustomerInfo, noteContent);
+        
+        // Đóng modal QR
         document.getElementById("qrRenewModal").style.display = "none";
+        
+        // Hiển thị modal thông báo chờ admin
         const waitingModal = document.getElementById("waitingModal");
         waitingModal.style.display = "flex";
         
-        // Tự động đóng modal sau 10 giây? Không, để người dùng tự đóng, nhưng có thể set timeout 5 phút để gợi ý
-        // Nhưng yêu cầu: thông báo chờ 5 phút để admin mở web, không tự động kích hoạt.
-        // Chúng ta chỉ hiển thị thông báo, không tự động reload hay kích hoạt gì cả.
-        // Người dùng có thể đóng modal và quay lại màn hình chính.
+        // Reset button
+        confirmBtn.innerHTML = originalText;
+        confirmBtn.disabled = false;
     }
     
-    // Xử lý xác nhận thanh toán: hiển thị thông báo chờ admin, không kích hoạt tự động
-    function handleConfirmPayment() {
-        if (currentRenewPackage) {
-            // Đóng modal QR
-            document.getElementById("qrRenewModal").style.display = "none";
-            // Hiển thị thông báo chờ admin kích hoạt trong vòng 5 phút
-            showWaitingForAdmin();
-            // Ở đây KHÔNG lưu trạng thái active, KHÔNG tự kích hoạt web.
-            // Toàn bộ chức năng quản lý vẫn bị khóa, chỉ hiển thị gia hạn.
-            // Có thể lưu lại yêu cầu vào localStorage để admin xử lý (tùy, nhưng yêu cầu chỉ hiển thị thông báo)
-            // Ghi log yêu cầu gia hạn (demo)
-            console.log(`Yêu cầu gia hạn ${currentRenewPackage.months} tháng - ${currentRenewPackage.amount}đ đã được gửi, chờ admin xác nhận.`);
-        } else {
-            alert("Vui lòng chọn gói gia hạn trước.");
-        }
+    // Đóng các modal
+    function closeInfoModal() {
+        document.getElementById("infoModal").style.display = "none";
     }
-    
-    // Đóng modal chờ admin
+    function closeQrModal() {
+        document.getElementById("qrRenewModal").style.display = "none";
+    }
     function closeWaitingModal() {
         document.getElementById("waitingModal").style.display = "none";
-        // Không reload, không thay đổi gì, vẫn giữ nguyên màn hình gia hạn
     }
     
-    // Tạo hiệu ứng sao nhẹ nhàng giữ nguyên giao diện
+    // Tạo hiệu ứng sao
     function createSubtleStars() {
         for (let i = 0; i < 60; i++) {
             const star = document.createElement('div');
@@ -512,66 +625,49 @@
         }
     }
     
-    // Gắn sự kiện cho các gói và nút bấm
+    // Gắn sự kiện
     function bindEvents() {
-        // Các gói cước
+        // Các gói cước: khi click sẽ hiện modal nhập thông tin thay vì tạo QR ngay
         const packages = document.querySelectorAll(".package-card");
         packages.forEach(pkg => {
             pkg.addEventListener("click", () => {
                 const months = parseInt(pkg.dataset.months);
                 const price = parseInt(pkg.dataset.price);
-                // Tạo QR luôn khi click vào gói (trải nghiệm nhanh)
-                generateRenewQR(months, price);
+                showInfoModal(months, price);
             });
         });
         
-        // Nút "NẠP TIỀN GIA HẠN NGAY" - mặc định chọn gói 1 tháng
-        const mainRenewBtn = document.getElementById("showCustomRenewBtn");
-        if (mainRenewBtn) {
-            mainRenewBtn.addEventListener("click", () => {
-                generateRenewQR(1, 100000);
-            });
-        }
+        // Nút chính (nạp tiền) mặc định chọn gói 1 tháng
+        // Không cần nút chính riêng vì đã có gói, nhưng vẫn giữ để tương thích, cho nó chọn gói 1 tháng
+        // Tuy nhiên theo giao diện không có nút chính nạp, chỉ có các gói. Nhưng nếu muốn thêm thì vẫn xử lý.
+        // (Trong file hiện tại không có nút btn-renew-main, chỉ có gói, nhưng để chắc chắn)
         
-        // Đóng modal QR
-        const closeQrBtn = document.getElementById("closeRenewQrBtn");
-        if (closeQrBtn) {
-            closeQrBtn.addEventListener("click", () => {
-                document.getElementById("qrRenewModal").style.display = "none";
-            });
-        }
+        // Modal info buttons
+        document.getElementById("cancelInfoBtn").addEventListener("click", closeInfoModal);
+        document.getElementById("submitInfoBtn").addEventListener("click", handleInfoSubmit);
         
-        // Xác nhận thanh toán -> hiển thị chờ admin
-        const confirmBtn = document.getElementById("confirmRenewPaymentBtn");
-        if (confirmBtn) {
-            confirmBtn.addEventListener("click", handleConfirmPayment);
-        }
+        // Modal QR buttons
+        document.getElementById("closeRenewQrBtn").addEventListener("click", closeQrModal);
+        document.getElementById("confirmRenewPaymentBtn").addEventListener("click", handleConfirmPayment);
         
-        // Đóng modal thông báo chờ admin
-        const closeWaitingBtn = document.getElementById("closeWaitingBtn");
-        if (closeWaitingBtn) {
-            closeWaitingBtn.addEventListener("click", closeWaitingModal);
-        }
+        // Modal waiting buttons
+        document.getElementById("closeWaitingBtn").addEventListener("click", closeWaitingModal);
         
-        // Click outside modal để đóng (cho trải nghiệm tốt)
+        // Click outside để đóng modal
         window.addEventListener("click", (e) => {
+            const infoModal = document.getElementById("infoModal");
             const qrModal = document.getElementById("qrRenewModal");
-            const waitingModal = document.getElementById("waitingModal");
-            if (e.target === qrModal) {
-                qrModal.style.display = "none";
-            }
-            if (e.target === waitingModal) {
-                waitingModal.style.display = "none";
-            }
+            const waitingModalElem = document.getElementById("waitingModal");
+            if (e.target === infoModal) closeInfoModal();
+            if (e.target === qrModal) closeQrModal();
+            if (e.target === waitingModalElem) closeWaitingModal();
         });
     }
     
-    // Khởi tạo trang: không có bất kỳ chức năng quản lý nào, chỉ hiển thị gia hạn
     function init() {
         createSubtleStars();
         bindEvents();
-        // Đảm bảo không có bảng quản lý hay lịch sử nào xuất hiện (đã bỏ hoàn toàn khỏi HTML)
-        // Giao diện chỉ gồm header, expiry-notice và footer
+        // Không hiển thị bất kỳ chức năng quản lý nào, chỉ có form gia hạn
     }
     
     init();
