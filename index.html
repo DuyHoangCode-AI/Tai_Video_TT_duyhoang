@@ -16,7 +16,6 @@
 
         body {
             background: #1a120b;
-            /* Nền chính: gradient ấm áp, gợi nhớ gỗ và ánh đèn câu lạc bộ */
             background-image: radial-gradient(circle at 10% 20%, rgba(70, 45, 20, 0.4) 0%, rgba(20, 12, 5, 0.9) 90%);
             min-height: 100vh;
             padding: 20px;
@@ -25,7 +24,6 @@
             overflow-x: hidden;
         }
 
-        /* Lớp phủ họa tiết nhẹ - vân gỗ tinh tế */
         body::before {
             content: "";
             position: fixed;
@@ -38,7 +36,6 @@
             z-index: 0;
         }
 
-        /* Hiệu ứng ánh sáng mờ phía dưới */
         body::after {
             content: "";
             position: fixed;
@@ -51,7 +48,6 @@
             z-index: 0;
         }
 
-        /* Xóa bỏ các sao băng chói, chỉ giữ những chấm sáng li ti như ánh đèn hắt */
         .star {
             position: fixed;
             width: 2px;
@@ -69,11 +65,6 @@
             50% { opacity: 0.5; transform: scale(1.2); }
         }
 
-        /* Loại bỏ hoàn toàn sao băng gây rối mắt (giữ lại nếu thích thì có thể bật nhưng ít hơn) */
-        .shooting-star {
-            display: none;
-        }
-
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -81,7 +72,6 @@
             z-index: 3;
         }
 
-        /* Header sang trọng */
         .header {
             text-align: center;
             margin-bottom: 30px;
@@ -123,7 +113,6 @@
             font-size: 0.9rem;
         }
 
-        /* Grid bàn chuyên nghiệp */
         .tables-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
@@ -296,7 +285,6 @@
             background: #ca8a04;
         }
 
-        /* Lịch sử & thống kê */
         .history-stats {
             background: rgba(0,0,0,0.55);
             backdrop-filter: blur(8px);
@@ -372,6 +360,79 @@
             overflow-x: auto;
         }
 
+        /* Menu grid mới cho tab đồ ăn */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+        .menu-item-card {
+            background: #2a241cee;
+            border-radius: 32px;
+            padding: 16px 10px;
+            text-align: center;
+            transition: 0.2s;
+            border: 1px solid #f3b33d66;
+            backdrop-filter: blur(2px);
+        }
+        .menu-item-card:hover {
+            transform: translateY(-4px);
+            background: #3a2f24;
+            border-color: #ffcc66;
+        }
+        .menu-item-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .menu-item-price {
+            font-size: 1.1rem;
+            color: #ffdd99;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .menu-item-btn {
+            background: #b87c1a;
+            color: #1f180a;
+            width: 100%;
+            justify-content: center;
+        }
+        .table-selector {
+            background: #2a241ccc;
+            border-radius: 60px;
+            padding: 12px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            backdrop-filter: blur(4px);
+        }
+        .table-selector label {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .table-selector select {
+            background: #1e1912;
+            border: 1px solid #f3b33d;
+            border-radius: 40px;
+            padding: 8px 18px;
+            color: #ffefcf;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+        }
+        .status-badge {
+            background: #2c2c2c;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+        }
+        .status-badge.playing-menu {
+            background: #c97e0a;
+        }
+
         footer {
             margin-top: 40px;
             text-align: center;
@@ -408,7 +469,6 @@
             }
         }
 
-        /* Modal tinh tế */
         .modal {
             display: none;
             position: fixed;
@@ -469,30 +529,6 @@
             background: white;
             padding: 12px;
         }
-
-        .notice {
-            background: #241f18aa;
-            border-radius: 40px;
-            padding: 35px;
-            text-align: center;
-        }
-        .notice i {
-            font-size: 4rem;
-            color: #ffcc66;
-        }
-        .notice p {
-            margin-top: 20px;
-            font-size: 1.2rem;
-        }
-        .spin-icon {
-            display: inline-block;
-            font-size: 3rem;
-            animation: spin 2s linear infinite;
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
@@ -537,34 +573,39 @@
             <div class="stats-table">
                 <h3 style="margin-bottom: 15px;"><i class="fas fa-chart-bar"></i> Thống kê theo từng bàn</h3>
                 <table id="perTableStats">
-                    <thead>
-                        <tr><th>Bàn</th><th>Số lượt chơi</th><th>Tổng giờ chơi</th><th>Tổng tiền giờ</th><th>Tổng tiền đồ uống/ăn</th><th>Tổng doanh thu</th></tr>
-                    </thead>
+                    <thead><tr><th>Bàn</th><th>Số lượt chơi</th><th>Tổng giờ chơi</th><th>Tổng tiền giờ</th><th>Tổng tiền đồ uống/ăn</th><th>Tổng doanh thu</th></tr></thead>
                     <tbody id="perTableStatsBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- TAB 3: Danh sách đồ ăn/uống -->
+        <!-- TAB 3: Danh sách đồ ăn/uống chính thức với các món cố định -->
         <div id="menuTab" class="tab-pane">
-            <div class="notice">
-                <span class="spin-icon">⚙️</span>
-                <p>Danh sách đồ ăn / thức uống đang được cập nhật.</p>
-                <p style="margin-top: 10px; font-size: 1rem; color: #ffdd9999;">Vui lòng quay lại sau!</p>
+            <div class="table-selector">
+                <label><i class="fas fa-chair"></i> Chọn bàn để thêm món:</label>
+                <select id="quickMenuTableSelect">
+                    <option value="1">Bàn 1</option>
+                    <option value="2">Bàn 2</option>
+                    <option value="3">Bàn 3</option>
+                    <option value="4">Bàn 4</option>
+                </select>
+                <div id="selectedTableStatus" class="status-badge">🔍 Đang kiểm tra</div>
             </div>
+            <div class="menu-grid" id="foodMenuGrid"></div>
+            <p style="margin-top: 20px; font-size: 0.85rem; text-align: center; opacity:0.8;"><i class="fas fa-plus-circle"></i> Nhấn vào món để thêm ngay vào bàn đã chọn (chỉ áp dụng khi bàn đang chơi)</p>
         </div>
     </div>
 
     <footer>
         <div class="footer-content">
-            <p>💰 <strong>💰 WEB QUẢN LÝ & TÍNH TIỀN CHO QUÁN BIDA ĐƯỢC XÂY DỰNG VÀ PHÁT TRIỂN BỞI DUY HOANG </strong></p>
+            <p>💰 <strong>WEB QUẢN LÝ & TÍNH TIỀN CHO QUÁN BIDA ĐƯỢC XÂY DỰNG VÀ PHÁT TRIỂN BỞI DUY HOANG</strong></p>
             <p>🏦 <strong>QR thanh toán: MB Bank - STK: 015223 - DO LE DUY HOANG</strong></p>
             <p style="font-size: 0.7rem;">© 2026 Bida Pro Gold | Quản lý 4 bàn bi-a chuyên nghiệp</p>
         </div>
     </footer>
 </div>
 
-<!-- Modal Thêm đồ uống/đồ ăn -->
+<!-- Modal Thêm đồ uống/đồ ăn (giữ nguyên cũ) -->
 <div id="addItemModal" class="modal">
     <div class="modal-content">
         <h3><i class="fas fa-utensils"></i> Thêm đồ / nước</h3>
@@ -587,7 +628,7 @@
     </div>
 </div>
 
-<!-- Modal chọn phương thức thanh toán khi kết thúc bàn -->
+<!-- Modal chọn phương thức thanh toán -->
 <div id="paymentMethodModal" class="modal">
     <div class="modal-content">
         <h3><i class="fas fa-money-bill-wave"></i> Thanh toán bàn <span id="paymentTableId"></span></h3>
@@ -634,11 +675,21 @@
 
 <script>
     // ------------------- CẤU HÌNH ------------------
-    const HOURLY_RATE = 40000;
+    const HOURLY_RATE = 50000;
     const BANK_BIN = "970422";
     const ACCOUNT_NO = "015223";
     const ACCOUNT_NAME = "DO LE DUY HOANG";
-    const DELETE_PASSWORD = "DuyHoangBiAPro";
+    const DELETE_PASSWORD = "DuyHoang";
+
+    // Menu cố định theo yêu cầu
+    const FIXED_MENU = [
+        { name: "🥤 Nước ngọt các loại", price: 15000 },
+        { name: "🧃 Bò húc", price: 20000 },
+        { name: "💧 Nước lọc", price: 7000 },
+        { name: "🚬 Thuốc lá", price: 18000 },
+        { name: "🍿 Snack các loại", price: 7000 },
+        { name: "🍺 Bia (lon/chai)", price: 15000 }
+    ];
 
     function roundToThousand(amount) {
         return Math.round(amount / 1000) * 1000;
@@ -749,6 +800,7 @@
         table.timerInterval = setInterval(() => {
             if (table.status === "playing") {
                 updateTableUI(tableId);
+                updateMenuTabStatus(); // cập nhật trạng thái bàn trên tab menu
             } else {
                 if (table.timerInterval) {
                     clearInterval(table.timerInterval);
@@ -757,6 +809,25 @@
             }
         }, 1000);
         updateTableUI(tableId);
+    }
+
+    // Hàm thêm món nhanh từ menu cố định
+    function addFixedItemToTable(tableId, itemName, itemPrice, quantity = 1) {
+        const table = tables.find(t => t.id === tableId);
+        if (!table) {
+            alert("Bàn không tồn tại!");
+            return false;
+        }
+        if (table.status !== "playing") {
+            alert(`Bàn ${tableId} hiện đang trống. Chỉ có thể thêm đồ khi bàn đang có khách chơi!`);
+            return false;
+        }
+        // Thêm item mới (không gộp để đơn giản, nhưng có thể gộp nếu muốn, giữ nguyên phong cách)
+        table.items.push({ name: itemName, price: itemPrice, quantity: quantity });
+        table.totalItemsPrice += itemPrice * quantity;
+        saveTablesToStorage();
+        updateTableUI(tableId);
+        return true;
     }
 
     function renderTables() {
@@ -817,6 +888,7 @@
         saveTablesToStorage();
         startTimerForTable(tableId);
         renderTables();
+        updateMenuTabStatus();
     }
 
     let currentTableIdForItem = null;
@@ -974,6 +1046,7 @@
         saveTablesToStorage();
         renderTables();
         renderHistoryAndStats();
+        updateMenuTabStatus();
         alert(`THANH TOÁN THÀNH CÔNG 💸💸!! BÀN ${tableId} ĐANG TRỐNG 🎱.`);
     }
 
@@ -982,8 +1055,8 @@
         if (tbody) {
             tbody.innerHTML = "";
             for (let h of historyPayments) {
-                const row = tbody.insertRow();
                 const itemsStr = h.items.map(it => `${it.name} x${it.quantity} (${(it.price*it.quantity).toLocaleString()}đ)`).join(", ") || "Không";
+                const row = tbody.insertRow();
                 row.innerHTML = `<td>${h.tableId}</td><td>${formatDateTime(h.startTime)}</td><td>${formatDateTime(h.endTime)}</td><td>${formatTimeFromSeconds(h.durationSeconds)}</td><td>${h.priceTime.toLocaleString()}đ</td><td>${itemsStr}</td><td><strong>${h.total.toLocaleString()}đ</strong></td><td>${h.paymentMethod}</td><td>${h.note}</td>`;
             }
         }
@@ -1064,8 +1137,48 @@
                 document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
                 document.getElementById(target).classList.add("active");
                 if (target === "statsTab") drawWeeklyChart();
+                if (target === "menuTab") renderFixedMenuAndStatus();
             });
         });
+    }
+
+    function renderFixedMenuAndStatus() {
+        const menuGrid = document.getElementById("foodMenuGrid");
+        if (!menuGrid) return;
+        menuGrid.innerHTML = "";
+        FIXED_MENU.forEach(menu => {
+            const card = document.createElement("div");
+            card.className = "menu-item-card";
+            card.innerHTML = `
+                <div class="menu-item-name">${menu.name}</div>
+                <div class="menu-item-price">${menu.price.toLocaleString()}đ</div>
+                <button class="menu-item-btn" data-name="${menu.name}" data-price="${menu.price}"><i class="fas fa-cart-plus"></i> Thêm +1</button>
+            `;
+            menuGrid.appendChild(card);
+        });
+        document.querySelectorAll(".menu-item-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const name = btn.getAttribute("data-name");
+                const price = parseInt(btn.getAttribute("data-price"));
+                const selectedTableId = parseInt(document.getElementById("quickMenuTableSelect").value);
+                addFixedItemToTable(selectedTableId, name, price, 1);
+            });
+        });
+        updateMenuTabStatus();
+    }
+
+    function updateMenuTabStatus() {
+        const selectedId = parseInt(document.getElementById("quickMenuTableSelect")?.value || 1);
+        const table = tables.find(t => t.id === selectedId);
+        const statusDiv = document.getElementById("selectedTableStatus");
+        if (table && table.status === "playing") {
+            statusDiv.innerHTML = `✅ Bàn ${selectedId} - ĐANG CHƠI (có thể thêm món)`;
+            statusDiv.className = "status-badge playing-menu";
+        } else {
+            statusDiv.innerHTML = `⛔ Bàn ${selectedId} - TRỐNG (chỉ thêm được khi đang chơi)`;
+            statusDiv.className = "status-badge";
+        }
     }
 
     function exportStatisticsTXT() {
@@ -1096,7 +1209,6 @@
         } else alert("Mật khẩu không chính xác!");
     }
 
-    // Tạo hiệu ứng sao nhẹ nhàng (không sao băng)
     function createSubtleStars() {
         for (let i=0; i<60; i++) {
             const star = document.createElement('div');
@@ -1114,7 +1226,10 @@
     renderTables();
     renderHistoryAndStats();
     initTabs();
+    renderFixedMenuAndStatus();
     createSubtleStars();
+    document.getElementById("quickMenuTableSelect")?.addEventListener("change", updateMenuTabStatus);
+    setInterval(updateMenuTabStatus, 1500);
 
     document.getElementById("confirmItemBtn").addEventListener("click", confirmAddItem);
     document.getElementById("cancelItemBtn").addEventListener("click", closeAddItemModal);
