@@ -2,1276 +2,786 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Quản lý Quán Bi-a | Bida Pro Gold - 4 Bàn</title>
-    <!-- Font Awesome 6 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=1.5">
+    <title>Quản lý Quán Bi-a | Bida Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Font chữ ký cho tiêu đề, lời chúc và đồng hồ -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        :root {
+            --bg: #0f0a05;
+            --card-bg: #1e1812;
+            --border: rgba(243, 179, 61, 0.6);
+            --text: #f5e7d3;
+            --accent: #f3b33d;
+            --btn: #b87c1a;
+            --btn-hover: #d4952b;
+            --danger: #c0392b;
+            --success: #27ae60;
+            --modal-bg: #1a140ef5;
+            --input-bg: #2d241b;
+            --shadow: 0 10px 24px rgba(0,0,0,0.7);
+            --header-glow: 0 0 30px rgba(243,179,61,0.5);
+            --radius: 22px;
         }
 
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
         body {
-            background: #1a120b;
-            background-image: radial-gradient(circle at 10% 20%, rgba(70, 45, 20, 0.4) 0%, rgba(20, 12, 5, 0.9) 90%);
+            background: var(--bg);
+            background-image: radial-gradient(ellipse at 30% 10%, #2a1a0a 0%, #0a0602 100%);
+            color: var(--text);
             min-height: 100vh;
-            padding: 20px;
-            color: #f5e7d3;
-            position: relative;
+            padding: 0 0 30px;
+            transition: background 0.3s, color 0.3s;
             overflow-x: hidden;
         }
 
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: repeating-linear-gradient(45deg, rgba(200, 160, 100, 0.03) 0px, rgba(200, 160, 100, 0.03) 2px, transparent 2px, transparent 8px);
-            pointer-events: none;
-            z-index: 0;
+        .top-toolbar {
+            position: sticky; top:0; z-index:100;
+            display: flex; justify-content: space-between; align-items: center; gap:8px;
+            padding: 8px 14px; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border); flex-wrap: wrap;
         }
-
-        body::after {
-            content: "";
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-            pointer-events: none;
-            z-index: 0;
+        .top-toolbar select {
+            background: var(--input-bg); border: 1px solid var(--accent); color: var(--text);
+            padding: 6px 12px; border-radius: 20px; font-weight:600; font-size:0.8rem; outline: none;
         }
-
-        .star {
-            position: fixed;
-            width: 2px;
-            height: 2px;
-            background: #ffdd99;
-            border-radius: 50%;
-            opacity: 0.2;
-            z-index: 1;
-            pointer-events: none;
-            animation: twinkle 4s infinite ease-in-out;
+        .top-toolbar .btn-icon {
+            display: flex; align-items: center; gap:5px; background: var(--btn); color:#fff;
+            border: none; padding: 7px 14px; border-radius: 20px; font-weight:700; font-size:0.8rem;
+            cursor: pointer; white-space: nowrap; box-shadow:0 2px 6px rgba(0,0,0,0.4); transition:0.2s;
         }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 3;
-        }
+        .top-toolbar .btn-icon:hover { background: var(--btn-hover); transform: scale(1.02); }
 
         .header {
-            text-align: center;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 18px;
-            flex-wrap: wrap;
-            background: rgba(0,0,0,0.35);
-            backdrop-filter: blur(8px);
-            border-radius: 80px;
-            padding: 15px 30px;
-            border: 1px solid rgba(243, 179, 61, 0.5);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            text-align: center; margin: 16px 10px 24px; padding: 20px 16px;
+            background: linear-gradient(180deg, #2f2618 0%, #1a1308 100%);
+            border-radius: 50px; border: 2px solid var(--accent);
+            box-shadow: var(--header-glow), 0 8px 20px rgba(0,0,0,0.6);
+            position: relative; overflow: hidden;
         }
-        .logo {
-            font-size: 3.8rem;
-            filter: drop-shadow(0 0 6px #e6b422);
-            animation: float 3s ease-in-out infinite;
+        .header::before {
+            content: ''; position: absolute; top:-40%; left:-20%; width:140%; height:180%;
+            background: radial-gradient(circle, rgba(255,215,100,0.12) 0%, transparent 70%);
+            animation: shimmer 3s infinite;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-6px); }
-        }
+        @keyframes shimmer { 0%,100%{transform:translate(-10%,-10%);} 50%{transform:translate(10%,10%);} }
         .header h1 {
-            font-size: 2.2rem;
-            background: linear-gradient(135deg, #ffe0a3, #e6b422);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: none;
-            letter-spacing: 1px;
+            font-family: 'Dancing Script', cursive; font-size: 2.6rem;
+            color: var(--accent); font-weight: 700; letter-spacing: 2px;
+            position: relative; z-index:2; margin:0; text-shadow: 0 0 12px var(--accent);
         }
-        .header p {
-            color: #ffdd99;
-            margin-top: 6px;
-            font-style: italic;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
+        .header p { color: var(--text); font-weight:600; font-size:0.85rem; margin-top:4px; position:relative; z-index:2; }
 
-        .tables-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-            gap: 28px;
-            margin-bottom: 40px;
-        }
+        .tables-container { max-width: 700px; margin: 0 auto; padding: 0 10px; }
+        .tables-grid { display: flex; flex-direction: column; gap: 16px; }
+        body.compact-mode .tables-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
         .table-card {
-            background: linear-gradient(145deg, #2a241cb3, #1e1912cc);
-            backdrop-filter: blur(5px);
-            border-radius: 40px;
-            padding: 20px;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.7);
-            transition: all 0.25s ease;
-            border: 1px solid rgba(243, 179, 61, 0.6);
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            background: var(--card-bg); border-radius: var(--radius); padding: 14px;
+            border: 1.5px solid var(--border); box-shadow: var(--shadow); transition: 0.3s;
+            opacity:0; transform: translateY(20px); animation: fadeInUp 0.5s forwards; cursor:default;
         }
+        .table-card.visible { opacity:1; transform:translateY(0); }
+        @keyframes fadeInUp { to { opacity:1; transform:translateY(0); } }
+        .table-card:hover { border-color: #ffcc66; box-shadow: 0 0 18px rgba(243,179,61,0.45); }
 
-        .table-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 28px 40px -12px black;
-            border-color: #ffcc66;
-            background: linear-gradient(145deg, #2f2820cc, #221c14cc);
+        /* Chế độ thu nhỏ – tối ưu cho điện thoại */
+        body.compact-mode .table-card {
+            padding: 8px 6px; border-radius: 18px; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(145deg, #1e1812, #0f0a05); min-height: 90px;
         }
-
-        .table-title {
-            font-size: 1.9rem;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            border-bottom: 2px solid #f3b33d;
-            padding-bottom: 12px;
-            margin-bottom: 18px;
+        body.compact-mode .table-card .table-title { font-size:0.85rem; border-bottom:none; margin-bottom:2px; }
+        body.compact-mode .table-card .badge { font-size:0.6rem; padding:2px 8px; }
+        /* ĐỒNG HỒ THU NHỎ - font chữ ký, kích thước vừa phải */
+        body.compact-mode .table-card .timer-display {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;  /* nhỏ hơn, vừa điện thoại */
+            font-weight: 700;
+            color: var(--accent);
+            text-shadow: 0 0 6px var(--accent);
+            background: rgba(0,0,0,0.35);
+            padding: 2px 10px;
+            border-radius: 12px;
+            letter-spacing: 1px;
+            margin:6px 0 2px;
+            line-height: 1.2;
         }
+        body.compact-mode .table-card .info-panel { background: none; padding:0; }
+        body.compact-mode .table-card .price-display,
+        body.compact-mode .table-card .items-list,
+        body.compact-mode .table-card .total-amount,
+        body.compact-mode .table-card .btn-group { display: none; }
 
-        .badge-status {
-            font-size: 0.85rem;
-            background: #2c2c2c;
-            padding: 5px 14px;
-            border-radius: 50px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
+        .table-title { font-size: 1.2rem; font-weight:800; display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--accent); padding-bottom:6px; margin-bottom:8px; }
+        .badge { font-size:0.7rem; padding:3px 12px; border-radius:20px; font-weight:700; white-space:nowrap; }
+        .badge.playing { background:#c97e0a; color:#fff; box-shadow:0 0 8px var(--accent); }
+        .badge.idle { background:#3a3a3a; color:#ccc; }
 
-        .badge-status.playing {
-            background: #c97e0a;
-            color: #fff3e0;
-            box-shadow: 0 0 8px #ffb347;
-            text-shadow: 0 0 2px darkgoldenrod;
-        }
-
-        .info-panel {
-            margin: 15px 0;
-            background: #1e1913aa;
-            backdrop-filter: blur(4px);
-            padding: 14px;
-            border-radius: 32px;
-        }
-
+        .info-panel { background:rgba(0,0,0,0.2); border-radius:16px; padding:8px 10px; margin:6px 0; }
+        /* ĐỒNG HỒ MỞ RỘNG CŨNG DÙNG FONT CHỮ KÝ */
         .timer-display {
-            font-size: 1.9rem;
-            font-weight: bold;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.7rem;  /* nhỏ hơn trước, vẫn dễ đọc */
+            font-weight: 700;
             text-align: center;
-            background: #00000066;
-            border-radius: 50px;
-            padding: 10px;
-            margin-bottom: 12px;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 3px;
-            color: #ffefbf;
-            text-shadow: 0 0 3px #ffb347;
+            color: #ffe7a0;
+            text-shadow: 0 0 4px var(--accent);
+            letter-spacing: 1px;
+            line-height: 1.2;
         }
+        .price-display { text-align:center; font-weight:700; color:var(--accent); font-size:0.9rem; margin:2px 0; }
+        .items-list { max-height:70px; overflow-y:auto; font-size:0.8rem; margin:4px 0; background:rgba(0,0,0,0.25); border-radius:12px; padding:4px 8px; }
+        .total-amount { font-weight:800; text-align:right; font-size:0.95rem; color:#ffe7a0; margin-top:4px; }
 
-        .price-display {
-            font-size: 1.35rem;
-            text-align: center;
-            background: #2f261caa;
-            border-radius: 40px;
-            padding: 8px;
-            margin-bottom: 12px;
-            color: #ffdd99;
-            font-weight: 600;
-        }
-
-        .items-list {
-            max-height: 140px;
-            overflow-y: auto;
-            font-size: 0.9rem;
-            margin: 10px 0;
-            background: #1a140ed9;
-            border-radius: 24px;
-            padding: 10px 14px;
-        }
-
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px dashed #ffcc6655;
-        }
-
-        .total-amount {
-            font-weight: bold;
-            text-align: right;
-            font-size: 1.25rem;
-            margin: 14px 0 10px;
-            color: #ffdd88;
-            background: #00000033;
-            padding: 8px 12px;
-            border-radius: 30px;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
+        .btn-group { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
         button {
-            background: #342a1e;
-            border: none;
-            color: #ffefcf;
-            padding: 10px 18px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: none; padding: 8px 14px; border-radius: 20px; font-weight:700; font-size:0.8rem;
+            cursor: pointer; display: inline-flex; align-items: center; gap:4px; transition:0.2s;
+            white-space: nowrap; box-shadow:0 2px 5px rgba(0,0,0,0.3);
         }
+        button.primary { background:var(--btn); color:#fff; } button.primary:hover { background:var(--btn-hover); }
+        button.success { background:var(--success); color:#fff; } button.danger { background:var(--danger); color:#fff; }
+        button.warning { background:#ca8a04; color:#000; } button.outline { background:transparent; border:1.5px solid var(--accent); color:var(--accent); }
+        button.small { padding: 6px 10px; font-size:0.7rem; border-radius: 16px; }
 
-        button i {
-            font-size: 1rem;
-        }
-
-        button.primary {
-            background: #b87c1a;
-            color: #2b1f0c;
-            font-weight: bold;
-        }
-
-        button.primary:hover {
-            background: #d4952b;
-            transform: scale(1.02);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        }
-
-        button.success {
-            background: #2c6e2f;
-        }
-
-        button.success:hover {
-            background: #1f5522;
-        }
-
-        button.danger {
-            background: #aa3e1c;
-        }
-
-        button.danger:hover {
-            background: #8e2f12;
-        }
-
-        button.warning {
-            background: #ca8a04;
-        }
-
-        .history-stats {
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(8px);
-            border-radius: 42px;
-            padding: 22px;
-            margin-top: 20px;
-            border: 1px solid #f3b33d55;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid #ffcc66;
-            flex-wrap: wrap;
-        }
-
+        .tabs-section { max-width:700px; margin:30px auto 0; padding:0 10px; }
+        .tabs { display:flex; gap:4px; overflow-x:auto; margin-bottom:14px; }
         .tab-btn {
-            background: transparent;
-            border-radius: 40px 40px 0 0;
-            padding: 10px 28px;
-            color: #ffefcf;
-            cursor: pointer;
-            font-weight: 600;
-            box-shadow: none;
+            background:transparent; border-radius:20px 20px 0 0; padding:8px 16px;
+            color:var(--text); font-weight:600; font-size:0.8rem; white-space:nowrap; flex-shrink:0;
+        }
+        .tab-btn.active { background:var(--accent); color:#1a120b; font-weight:800; }
+        .tab-pane { display:none; background:rgba(0,0,0,0.25); border-radius:0 20px 20px 20px; padding:14px; }
+        .tab-pane.active { display:block; }
+
+        .menu-strip { display:flex; flex-wrap:wrap; gap:8px; }
+        .menu-strip-item {
+            display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.04);
+            border:1px solid var(--border); border-radius:20px; padding:6px 14px; font-weight:600; font-size:0.85rem;
         }
 
-        .tab-btn.active {
-            background: #b8860b;
-            color: #1f180a;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            color: #f0e2cf;
-        }
-
-        th, td {
-            padding: 12px 8px;
-            text-align: left;
-            border-bottom: 1px solid #ffcc6644;
-        }
-
-        th {
-            color: #ffdd99;
-            font-weight: 600;
-        }
-
-        .export-btn, .delete-history-btn {
-            background: #1f6392;
-            margin-right: 12px;
-            margin-bottom: 15px;
-        }
-        .delete-history-btn {
-            background: #aa3e1c;
-        }
-        .delete-history-btn:hover {
-            background: #c2410c;
-        }
-
-        .stats-table {
-            margin-top: 20px;
-            overflow-x: auto;
-        }
-
-        /* Menu grid mới cho tab đồ ăn */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 18px;
-            margin-top: 20px;
-        }
-        .menu-item-card {
-            background: #2a241cee;
-            border-radius: 32px;
-            padding: 16px 10px;
-            text-align: center;
-            transition: 0.2s;
-            border: 1px solid #f3b33d66;
-            backdrop-filter: blur(2px);
-        }
-        .menu-item-card:hover {
-            transform: translateY(-4px);
-            background: #3a2f24;
-            border-color: #ffcc66;
-        }
-        .menu-item-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        .menu-item-price {
-            font-size: 1.1rem;
-            color: #ffdd99;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-        .menu-item-btn {
-            background: #b87c1a;
-            color: #1f180a;
-            width: 100%;
-            justify-content: center;
-        }
-        .table-selector {
-            background: #2a241ccc;
-            border-radius: 60px;
-            padding: 12px 20px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            backdrop-filter: blur(4px);
-        }
-        .table-selector label {
-            font-weight: bold;
-            font-size: 1rem;
-        }
-        .table-selector select {
-            background: #1e1912;
-            border: 1px solid #f3b33d;
-            border-radius: 40px;
-            padding: 8px 18px;
-            color: #ffefcf;
-            font-weight: 600;
-            outline: none;
-            cursor: pointer;
-        }
-        .status-badge {
-            background: #2c2c2c;
-            padding: 4px 14px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-        }
-        .status-badge.playing-menu {
-            background: #c97e0a;
-        }
-
-        footer {
-            margin-top: 40px;
-            text-align: center;
-        }
-        .footer-content {
-            background: rgba(0,0,0,0.65);
-            backdrop-filter: blur(4px);
-            padding: 14px 20px;
-            border-radius: 50px;
-            display: inline-block;
-            width: auto;
-            margin: 0 auto;
-            border: 1px solid #f3b33d66;
-        }
-        .footer-content p {
-            margin: 5px 0;
-            font-size: 0.85rem;
-            color: #ffe0b5;
-        }
-        .footer-content strong {
-            color: #ffcc55;
-        }
-
-        @media (max-width: 720px) {
-            .btn-group button {
-                flex: 1;
-                justify-content: center;
-            }
-            .timer-display {
-                font-size: 1.4rem;
-            }
-            .table-title {
-                font-size: 1.5rem;
-            }
-        }
-
+        /* Modal với hiệu ứng fade */
         .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(6px);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.85); z-index:200; display:flex; justify-content:center; align-items:center;
+            padding:20px; opacity:0; visibility:hidden; transition: opacity 0.25s ease, visibility 0.25s;
         }
-
+        .modal.show { opacity:1; visibility:visible; }
         .modal-content {
-            background: #2a241cee;
-            border-radius: 48px;
-            max-width: 520px;
-            width: 90%;
-            padding: 28px;
-            box-shadow: 0 30px 50px rgba(0,0,0,0.6);
-            border-top: 5px solid #f3b33d;
-            border-bottom: 1px solid #f3b33d;
+            background:var(--modal-bg); border-radius:28px; padding:20px;
+            max-width:460px; width:100%; max-height:85vh; overflow-y:auto;
+            border:2px solid var(--accent); box-shadow:0 20px 35px rgba(0,0,0,0.8);
+            transform: scale(0.95); transition: transform 0.25s ease;
         }
+        .modal.show .modal-content { transform: scale(1); }
 
-        .modal-content h3 {
-            font-size: 1.7rem;
-            margin-bottom: 20px;
-            color: #ffdd99;
+        .item-row-select {
+            display:flex; align-items:center; justify-content:space-between; gap:8px;
+            background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+            border-radius:16px; padding:8px 10px; margin-bottom:6px; flex-wrap:wrap;
         }
+        .qty-ctrl button { width:32px; height:32px; border-radius:50%; padding:0; justify-content:center; font-size:1rem; background:var(--btn); color:#fff; }
 
-        .form-group {
-            margin-bottom: 18px;
-        }
+        .cart-box { background:rgba(0,0,0,0.3); border-radius:14px; padding:10px; margin-top:10px; max-height:130px; overflow-y:auto; }
+        .cart-item { display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,0.1); }
+        .cart-total { text-align:right; font-weight:800; margin-top:6px; color:var(--accent); }
 
-        input, select {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 60px;
-            border: none;
-            background: #2d241b;
-            color: #ffefcf;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.2s;
-        }
-        input:focus, select:focus {
-            background: #3f321f;
-            box-shadow: 0 0 0 2px #f3b33d;
-        }
+        table { width:100%; border-collapse:collapse; font-size:0.75rem; }
+        th,td { padding:6px 4px; border-bottom:1px solid rgba(255,255,255,0.1); text-align:left; }
+        th { color:var(--accent); font-weight:700; }
 
-        .qr-preview {
-            text-align: center;
-            margin: 20px 0;
+        .footer { max-width:700px; margin:30px auto 0; padding:0 10px; }
+        .footer-box {
+            background:linear-gradient(180deg, #2f2618 0%, #1a1308 100%);
+            border-radius:30px; border:2px solid var(--accent);
+            box-shadow:var(--header-glow), 0 8px 20px rgba(0,0,0,0.5);
+            padding:20px; text-align:center; color:var(--text); font-weight:600;
+            backdrop-filter:blur(4px); position:relative; overflow:hidden;
         }
+        .footer-box::before {
+            content:''; position:absolute; top:-30%; left:-20%; width:140%; height:160%;
+            background:radial-gradient(circle, rgba(255,215,100,0.08) 0%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+        .footer-box p { position:relative; z-index:2; margin:5px 0; color:var(--text); }
+        .footer-box strong { color:var(--accent); font-weight:800; }
+        .footer-box .signature { font-family:'Dancing Script',cursive; font-size:1.4rem; color:var(--accent); margin-top:6px; }
 
-        .qr-preview img {
-            max-width: 220px;
-            border-radius: 24px;
-            background: white;
-            padding: 12px;
-        }
+        /* Welcome modal */
+        .welcome-modal .modal-content { text-align:center; max-width:420px; }
+        .welcome-text { font-family:'Dancing Script',cursive; font-size:1.8rem; font-weight:700; color:var(--accent); margin:12px 0; line-height:1.4; }
+        .wishes-list { text-align: left; margin: 16px 0; font-size: 1rem; color: var(--text); }
+        .wishes-list li { margin: 6px 0; list-style: none; }
+        .wishes-list i { color: var(--accent); margin-right: 8px; }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <div class="logo">🎱</div>
-        <div>
-            <h1><i class="fas fa-crown"></i> BIDA PRO GOLD <i class="fas fa-table-tennis"></i></h1>
-            <p>Quản lý & Tính tiền | Giá cả hợp lý | Tối ưu lợi nhuận | Dịch vụ luôn cập nhập phiên bản mới nhất</p>
-        </div>
+<div class="top-toolbar">
+    <div style="display:flex; align-items:center; gap:6px;">
+        <label style="font-size:0.7rem;">🎨</label>
+        <select id="themeSelect">
+            <option value="dark">🌑 Đen tối</option>
+            <option value="light">☀️ Sáng ấm</option>
+            <option value="green">🌿 Xanh lá</option>
+            <option value="ocean">🌊 Đại dương</option>
+            <option value="fire">🔥 Lửa đen</option>
+            <option value="purple">🟣 Tím mộng</option>
+            <option value="gold">✨ Vàng kim</option>
+            <option value="sunset">🌇 Hoàng hôn</option>
+            <option value="mint">🍃 Bạc hà</option>
+            <option value="midnight">🌌 Nửa đêm</option>
+        </select>
     </div>
-
-    <div class="tables-grid" id="tablesGrid"></div>
-
-    <div class="history-stats">
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="historyTab">📋 Lịch sử thanh toán</button>
-            <button class="tab-btn" data-tab="statsTab">📊 Thống kê doanh thu</button>
-            <button class="tab-btn" data-tab="menuTab">🍽️ Danh sách đồ ăn/uống</button>
-        </div>
-
-        <!-- TAB 1: Lịch sử thanh toán -->
-        <div id="historyTab" class="tab-pane active">
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
-                <button id="exportTxtBtn" class="export-btn"><i class="fas fa-file-alt"></i> Xuất TXT thống kê</button>
-                <button id="deleteHistoryBtn" class="delete-history-btn"><i class="fas fa-trash-alt"></i> Xóa lịch sử</button>
-            </div>
-            <div style="overflow-x: auto;">
-                <table id="historyTable">
-                    <thead>
-                        <tr><th>Bàn</th><th>Bắt đầu</th><th>Kết thúc</th><th>Giờ chơi</th><th>Tiền giờ</th><th>Đồ uống/ăn</th><th>Tổng tiền</th><th>PT thanh toán</th><th>Ghi chú</th></tr>
-                    </thead>
-                    <tbody id="historyBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- TAB 2: Thống kê doanh thu -->
-        <div id="statsTab" class="tab-pane">
-            <div id="statsSummary" style="background:#1f1912cc; border-radius: 32px; padding: 18px; margin-bottom: 20px;"></div>
-            <canvas id="revenueChart" width="400" height="200" style="background:#fff; border-radius: 32px; max-width:100%; margin-bottom: 30px;"></canvas>
-            <div class="stats-table">
-                <h3 style="margin-bottom: 15px;"><i class="fas fa-chart-bar"></i> Thống kê theo từng bàn</h3>
-                <table id="perTableStats">
-                    <thead><tr><th>Bàn</th><th>Số lượt chơi</th><th>Tổng giờ chơi</th><th>Tổng tiền giờ</th><th>Tổng tiền đồ uống/ăn</th><th>Tổng doanh thu</th></tr></thead>
-                    <tbody id="perTableStatsBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- TAB 3: Danh sách đồ ăn/uống chính thức với các món cố định -->
-        <div id="menuTab" class="tab-pane">
-            <div class="table-selector">
-                <label><i class="fas fa-chair"></i> Chọn bàn để thêm món:</label>
-                <select id="quickMenuTableSelect">
-                    <option value="1">Bàn 1</option>
-                    <option value="2">Bàn 2</option>
-                    <option value="3">Bàn 3</option>
-                    <option value="4">Bàn 4</option>
-                </select>
-                <div id="selectedTableStatus" class="status-badge">🔍 Đang kiểm tra</div>
-            </div>
-            <div class="menu-grid" id="foodMenuGrid"></div>
-            <p style="margin-top: 20px; font-size: 0.85rem; text-align: center; opacity:0.8;"><i class="fas fa-plus-circle"></i> Nhấn vào món để thêm ngay vào bàn đã chọn (chỉ áp dụng khi bàn đang chơi)</p>
-        </div>
-    </div>
-
-    <footer>
-        <div class="footer-content">
-            <p>💰 <strong>WEB QUẢN LÝ & TÍNH TIỀN CHO QUÁN BIDA ĐƯỢC XÂY DỰNG VÀ PHÁT TRIỂN BỞI DUY HOANG</strong></p>
-            <p>🏦 <strong>QR thanh toán: MB Bank - STK: 015223 - DO LE DUY HOANG</strong></p>
-            <p style="font-size: 0.7rem;">© 2026 Bida Pro Gold | Quản lý 4 bàn bi-a chuyên nghiệp</p>
-        </div>
-    </footer>
+    <button id="toggleCompactBtn" class="btn-icon">
+        <i class="fas fa-expand-alt"></i> <span id="toggleLabel">Thu nhỏ</span>
+    </button>
 </div>
 
-<!-- Modal Thêm đồ uống/đồ ăn (giữ nguyên cũ) -->
+<div class="header">
+    <h1>🎱 BIDA PRO</h1>
+    <p>Quản lý chuyên nghiệp · 50.000đ/giờ · 4 bàn</p>
+</div>
+
+<div class="tables-container">
+    <div class="tables-grid" id="tablesGrid"></div>
+</div>
+
+<div class="tabs-section">
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="historyTab">📋 Lịch sử</button>
+        <button class="tab-btn" data-tab="statsTab">📊 Thống kê</button>
+        <button class="tab-btn" data-tab="menuTab">🍽️ Menu đồ ăn</button>
+    </div>
+    <div id="historyTab" class="tab-pane active">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center;">
+            <select id="filterTableSelect" style="background:var(--input-bg); color:var(--text); border-radius:20px; padding:6px 12px; border:1px solid var(--accent);">
+                <option value="all">Tất cả bàn</option>
+                <option value="1">Bàn 1</option><option value="2">Bàn 2</option>
+                <option value="3">Bàn 3</option><option value="4">Bàn 4</option>
+            </select>
+            <button id="applyFilterBtn" class="warning small">Lọc</button>
+            <button id="exportTxtBtn" class="outline small">📄 TXT</button>
+            <button id="exportCsvBtn" class="outline small">📊 CSV</button>
+            <button id="deleteHistoryBtn" class="danger small">🗑 Xóa</button>
+        </div>
+        <div style="overflow-x:auto;">
+            <table id="historyTable"><thead><tr><th>Bàn</th><th>Bắt đầu</th><th>Kết thúc</th><th>Giờ</th><th>Tiền giờ</th><th>Đồ</th><th>Tổng</th><th>PT</th></tr></thead><tbody id="historyBody"></tbody></table>
+        </div>
+    </div>
+    <div id="statsTab" class="tab-pane">
+        <div id="statsSummary" style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px;"></div>
+        <canvas id="revenueChart" height="180" style="background:#fff; border-radius:20px; width:100%; max-width:100%;"></canvas>
+        <div style="overflow-x:auto; margin-top:12px;">
+            <table id="perTableStats"><thead><tr><th>Bàn</th><th>Lượt</th><th>Giờ</th><th>Tiền giờ</th><th>Đồ</th><th>Tổng DT</th></tr></thead><tbody id="perTableStatsBody"></tbody></table>
+        </div>
+    </div>
+    <div id="menuTab" class="tab-pane">
+        <h3 style="margin-bottom:12px;">🍽️ Danh sách đồ ăn / thức uống</h3>
+        <div class="menu-strip" id="menuStrip"></div>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="footer-box">
+        <p>💰 <strong>WEB QUẢN LÝ & TÍNH TIỀN CHO QUÁN BIDA ĐƯỢC XÂY DỰNG VÀ PHÁT TRIỂN BỞI DUY HOANG</strong></p>
+        <p>🏦 <strong>QR thanh toán: MB Bank - STK: 015223 - DO LE DUY HOANG</strong></p>
+        <p style="font-size:0.7rem;">© 2026 Bida Pro | Quản lý 4 bàn bi-a chuyên nghiệp | Giá 50.000đ/giờ</p>
+        <div class="signature">Duy Hoang</div>
+    </div>
+</div>
+
+<!-- MODALS -->
 <div id="addItemModal" class="modal">
     <div class="modal-content">
-        <h3><i class="fas fa-utensils"></i> Thêm đồ / nước</h3>
-        <div class="form-group">
-            <label>Tên món (VD: Bia Heineken, Snack, ...)</label>
-            <input type="text" id="itemName" placeholder="Tên sản phẩm">
+        <h3>➕ Thêm đồ - Bàn <span id="modalTableId"></span></h3>
+        <div id="modalItemList"></div>
+        <div class="cart-box" id="modalCartBox" style="display:none;">
+            <strong>🛒 Giỏ tạm:</strong>
+            <div id="modalCartItems"></div>
+            <div class="cart-total" id="modalCartTotal"></div>
         </div>
-        <div class="form-group">
-            <label>Đơn giá (VNĐ)</label>
-            <input type="number" id="itemPrice" placeholder="Ví dụ: 20000">
-        </div>
-        <div class="form-group">
-            <label>Số lượng</label>
-            <input type="number" id="itemQuantity" value="1" min="1">
-        </div>
-        <div class="btn-group" style="justify-content: flex-end;">
-            <button id="cancelItemBtn" class="danger">Hủy</button>
-            <button id="confirmItemBtn" class="primary">Thêm vào bàn</button>
+        <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+            <button id="cancelModalBtn" class="danger">Hủy</button>
+            <button id="confirmModalBtn" class="primary">✅ Xác nhận thêm</button>
         </div>
     </div>
 </div>
 
-<!-- Modal chọn phương thức thanh toán -->
-<div id="paymentMethodModal" class="modal">
+<div id="checkoutModal" class="modal">
     <div class="modal-content">
-        <h3><i class="fas fa-money-bill-wave"></i> Thanh toán bàn <span id="paymentTableId"></span></h3>
-        <div id="paymentSummary" style="margin: 15px 0; background: #2d241b; padding: 16px; border-radius: 28px;"></div>
-        <div class="btn-group" style="justify-content: center; gap: 20px;">
-            <button id="cashPaymentBtn" class="success"><i class="fas fa-money-bill"></i> Tiền mặt</button>
-            <button id="qrPaymentBtn" class="primary"><i class="fas fa-qrcode"></i> QR Bank</button>
+        <h3>💰 Tính tiền - Bàn <span id="checkoutTableId"></span></h3>
+        <div id="checkoutSummary" style="margin:10px 0; padding:12px; background:rgba(0,0,0,0.3); border-radius:18px;"></div>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <button id="cashBtn" class="success">💵 Tiền mặt</button>
+            <button id="qrBtn" class="primary">📱 QR Bank</button>
         </div>
-        <div style="margin-top: 15px; text-align: center;">
-            <button id="cancelPaymentBtn" class="danger">Hủy</button>
-        </div>
+        <div style="text-align:center; margin-top:10px;"><button id="cancelCheckoutBtn" class="danger small">Hủy</button></div>
     </div>
 </div>
 
-<!-- Modal QR Bank -->
 <div id="qrModal" class="modal">
-    <div class="modal-content" style="max-width: 450px;">
-        <h3><i class="fas fa-qrcode"></i> Thanh toán QR Bank</h3>
-        <div class="qr-preview" id="qrImageContainer">
-            <img id="qrCodeImg" src="" alt="QR thanh toán">
-        </div>
-        <p id="qrInfo" style="font-size: 14px; margin: 10px 0; text-align: center;"></p>
-        <div class="btn-group" style="justify-content: center;">
-            <button id="closeQrBtn" class="danger">Đóng</button>
-            <button id="confirmPaymentAfterQrBtn" class="success">Xác nhận đã thanh toán</button>
+    <div class="modal-content" style="text-align:center;">
+        <h3>📱 Quét mã QR</h3>
+        <img id="qrImage" src="" alt="QR" style="max-width:220px; border-radius:20px; background:#fff; padding:10px;">
+        <p id="qrInfo" style="margin:8px 0;"></p>
+        <button id="confirmQrBtn" class="success">✅ Đã thanh toán</button>
+        <button id="closeQrBtn" class="danger small" style="margin-top:6px;">Đóng</button>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>⚠ Xóa lịch sử</h3>
+        <input type="password" id="deletePass" placeholder="Mật khẩu" style="width:100%; margin:10px 0; padding:10px; border-radius:20px; background:var(--input-bg); color:var(--text); border:1px solid var(--accent);">
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button id="cancelDeleteBtn" class="danger small">Hủy</button>
+            <button id="confirmDeleteBtn" class="primary small">Xóa</button>
         </div>
     </div>
 </div>
 
-<!-- Modal xác nhận xóa lịch sử -->
-<div id="deleteConfirmModal" class="modal">
-    <div class="modal-content">
-        <h3><i class="fas fa-exclamation-triangle"></i> Xóa lịch sử</h3>
-        <p>Nhập mật khẩu để xóa toàn bộ lịch sử:</p>
-        <div class="form-group">
-            <input type="password" id="deletePassword" placeholder="Mật khẩu">
+<div id="detailModal" class="modal">
+    <div class="modal-content" id="detailModalContent"></div>
+</div>
+
+<!-- WELCOME MODAL (nhiều lời chúc) -->
+<div id="welcomeModal" class="modal">
+    <div class="modal-content welcome-modal">
+        <div style="font-size:3rem;">🎱</div>
+        <div class="welcome-text">Xin chào quý khách!</div>
+        <div class="wishes-list">
+            <ul>
+                <li><i>🎯</i> Cảm ơn quý khách đã tin tưởng sử dụng website.</li>
+                <li><i>💎</i> Chúc quý khách làm ăn phát đạt, buôn may bán đắt.</li>
+                <li><i>🍀</i> Chúc quán luôn đông khách, bàn nào cũng kín.</li>
+                <li><i>⚡</i> Chúc một ngày làm việc hiệu quả, nhiều năng lượng.</li>
+                <li><i>🏆</i> Cùng Bida Pro vươn tới đẳng cấp chuyên nghiệp!</li>
+            </ul>
         </div>
-        <div class="btn-group" style="justify-content: flex-end;">
-            <button id="cancelDeleteBtn" class="danger">Hủy</button>
-            <button id="confirmDeleteBtn" class="primary">Xóa</button>
-        </div>
+        <div style="font-family:'Dancing Script',cursive; font-size:1.6rem; color:var(--accent); margin-top:10px;">Duy Hoang</div>
+        <button id="closeWelcomeBtn" class="primary" style="margin-top:20px;">Đã hiểu & Bắt đầu</button>
     </div>
 </div>
 
 <script>
-    // ------------------- CẤU HÌNH ------------------
-    const HOURLY_RATE = 50000;
-    const BANK_BIN = "970422";
-    const ACCOUNT_NO = "015223";
-    const ACCOUNT_NAME = "DO LE DUY HOANG";
-    const DELETE_PASSWORD = "DuyHoang";
+    (function() {
+        const HOURLY_RATE = 50000;
+        const BANK_BIN = "970422";
+        const ACCOUNT_NO = "015223";
+        const ACCOUNT_NAME = "DO LE DUY HOANG";
+        const DELETE_PASS = "DuyHoang";
 
-    // Menu cố định theo yêu cầu
-    const FIXED_MENU = [
-        { name: "🥤 Nước ngọt các loại", price: 15000 },
-        { name: "🧃 Bò húc", price: 20000 },
-        { name: "💧 Nước lọc", price: 7000 },
-        { name: "🚬 Thuốc lá", price: 18000 },
-        { name: "🍿 Snack các loại", price: 7000 },
-        { name: "🍺 Bia (lon/chai)", price: 15000 },
-        { name: "🥛 Sữa", price: 10000 }
-    ];
+        const MENU = [
+            { icon: '🥤', name: 'Nước ngọt', price: 15000 },
+            { icon: '🧃', name: 'Bò húc', price: 20000 },
+            { icon: '💧', name: 'Nước lọc', price: 7000 },
+            { icon: '🚬', name: 'Thuốc lá', price: 18000 },
+            { icon: '🍿', name: 'Snack', price: 7000 },
+            { icon: '🍺', name: 'Bia', price: 15000 },
+            { icon: '🥛', name: 'Sữa', price: 10000 }
+        ];
 
-    function roundToThousand(amount) {
-        return Math.round(amount / 1000) * 1000;
-    }
+        function fmtK(price) { return (price / 1000).toFixed(0) + 'k'; }
+        function fmtMoney(price) { return price.toLocaleString('vi-VN') + 'đ'; }
+        function roundK(amount) { return Math.round(amount / 1000) * 1000; }
+        function calcPrice(sec) { return roundK((sec / 3600) * HOURLY_RATE); }
+        function fmtTime(sec) {
+            const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+            return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }
+        function fmtDate(ts) {
+            if (!ts) return '--';
+            const d = new Date(ts);
+            return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+        }
 
-    function calculatePriceFromSeconds(seconds) {
-        const exactPrice = (seconds / 3600) * HOURLY_RATE;
-        return roundToThousand(exactPrice);
-    }
+        let tables = [
+            { id:1, status:'idle', startTime:null, items:[], totalItems:0, interval:null },
+            { id:2, status:'idle', startTime:null, items:[], totalItems:0, interval:null },
+            { id:3, status:'idle', startTime:null, items:[], totalItems:0, interval:null },
+            { id:4, status:'idle', startTime:null, items:[], totalItems:0, interval:null }
+        ];
+        let history = [];
+        let compactMode = false;
+        let pendingCheckout = null;
+        let modalCart = [];
+        let modalTableId = null;
+        let currentDetailId = null;
 
-    let tables = [
-        { id: 1, status: "idle", startTime: null, items: [], totalItemsPrice: 0, endTime: null, finalTotal: null, timerInterval: null },
-        { id: 2, status: "idle", startTime: null, items: [], totalItemsPrice: 0, endTime: null, finalTotal: null, timerInterval: null },
-        { id: 3, status: "idle", startTime: null, items: [], totalItemsPrice: 0, endTime: null, finalTotal: null, timerInterval: null },
-        { id: 4, status: "idle", startTime: null, items: [], totalItemsPrice: 0, endTime: null, finalTotal: null, timerInterval: null }
-    ];
+        function save() {
+            localStorage.setItem('bida_tables_v9', JSON.stringify(tables.map(t=>({...t,interval:null}))));
+            localStorage.setItem('bida_history_v9', JSON.stringify(history));
+            localStorage.setItem('bida_compact_v9', compactMode);
+        }
+        function load() {
+            const td = localStorage.getItem('bida_tables_v9');
+            if(td) try { tables = JSON.parse(td); tables.forEach(t=>{ if(t.status==='playing' && t.startTime) startTimer(t.id); }); } catch(e){}
+            const hs = localStorage.getItem('bida_history_v9');
+            if(hs) try { history = JSON.parse(hs); } catch(e){}
+            compactMode = localStorage.getItem('bida_compact_v9') === 'true';
+            if(compactMode) document.body.classList.add('compact-mode');
+            document.getElementById('toggleLabel').innerText = compactMode ? 'Mở rộng' : 'Thu nhỏ';
+            const theme = localStorage.getItem('bida_theme_v9') || 'dark';
+            document.getElementById('themeSelect').value = theme;
+            applyTheme(theme);
+            if(!sessionStorage.getItem('welcomeShown')) {
+                document.getElementById('welcomeModal').classList.add('show');
+                sessionStorage.setItem('welcomeShown', 'true');
+            }
+        }
+        function applyTheme(t) {
+            document.body.className = document.body.className.replace(/theme-\w+/g,'');
+            document.body.classList.add('theme-'+t);
+            if(compactMode) document.body.classList.add('compact-mode');
+            localStorage.setItem('bida_theme_v9', t);
+            const root = document.documentElement;
+            const themes = {
+                dark: {bg:'#0f0a05',card:'#1e1812',border:'rgba(243,179,61,0.6)',text:'#f5e7d3',accent:'#f3b33d',btn:'#b87c1a',input:'#2d241b',modal:'#1a140ef5'},
+                light: {bg:'#f0e6d3',card:'#f5ede0',border:'rgba(180,130,50,0.6)',text:'#3e2f1c',accent:'#b8860b',btn:'#d4952b',input:'#e8d9c0',modal:'#f5ede0f5'},
+                green: {bg:'#0a1f0a',card:'#1a3a1a',border:'rgba(100,200,80,0.55)',text:'#e0f0d0',accent:'#60c040',btn:'#408020',input:'#1a2a1a',modal:'#1a301aF5'},
+                ocean: {bg:'#0a1625',card:'#1a2a40',border:'rgba(60,160,240,0.55)',text:'#d0e0f0',accent:'#4090e0',btn:'#2060b0',input:'#151f30',modal:'#151f30f5'},
+                fire: {bg:'#1a0a05',card:'#3a1a0a',border:'rgba(255,100,30,0.55)',text:'#f0d0c0',accent:'#ff6010',btn:'#cc4000',input:'#2a1510',modal:'#2a1510f5'},
+                purple: {bg:'#1a0a1a',card:'#2a1a2a',border:'rgba(200,100,255,0.55)',text:'#f0d0f0',accent:'#c060f0',btn:'#8030b0',input:'#2a152a',modal:'#1e1020f5'},
+                gold: {bg:'#1a1405',card:'#2a2410',border:'rgba(255,215,0,0.55)',text:'#ffe7a0',accent:'#ffd700',btn:'#b8960a',input:'#2d2410',modal:'#1e1808f5'},
+                sunset: {bg:'#2a0a05',card:'#3a1a0a',border:'rgba(255,100,50,0.55)',text:'#f0d0c0',accent:'#ff6030',btn:'#cc4020',input:'#2a1510',modal:'#2a1510f5'},
+                mint: {bg:'#0a1a15',card:'#1a2a20',border:'rgba(80,220,150,0.55)',text:'#d0f0e0',accent:'#50d090',btn:'#208050',input:'#152a20',modal:'#102018f5'},
+                midnight: {bg:'#0a0a1a',card:'#1a1a2a',border:'rgba(100,100,255,0.55)',text:'#d0d0f0',accent:'#6060f0',btn:'#3030b0',input:'#151530',modal:'#101020f5'}
+            };
+            const th = themes[t] || themes.dark;
+            root.style.setProperty('--bg', th.bg);
+            root.style.setProperty('--card-bg', th.card);
+            root.style.setProperty('--border', th.border);
+            root.style.setProperty('--text', th.text);
+            root.style.setProperty('--accent', th.accent);
+            root.style.setProperty('--btn', th.btn);
+            root.style.setProperty('--input-bg', th.input);
+            root.style.setProperty('--modal-bg', th.modal);
+            document.body.style.background = th.bg;
+            document.body.style.color = th.text;
+        }
 
-    let historyPayments = [];
-    let currentPendingTable = null;
+        function getElapsed(table) {
+            if(table.status==='playing' && table.startTime) return Math.floor((Date.now()-table.startTime)/1000);
+            return 0;
+        }
+        function startTimer(id) {
+            const t = tables.find(x=>x.id===id);
+            if(t.interval) clearInterval(t.interval);
+            t.interval = setInterval(() => {
+                if(t.status==='playing') {
+                    updateTableCard(id);
+                    if(currentDetailId === id && document.getElementById('detailModal').classList.contains('show'))
+                        updateDetailModal(id);
+                } else { clearInterval(t.interval); t.interval=null; }
+            }, 1000);
+        }
+        function updateTableCard(id) {
+            const t = tables.find(x=>x.id===id);
+            const card = document.querySelector(`.table-card[data-id="${id}"]`);
+            if(!card || !t) return;
+            const sec = getElapsed(t);
+            card.querySelector('.timer-display').innerText = fmtTime(sec);
+            if(!compactMode) {
+                card.querySelector('.price-display').innerText = `💰 Giờ: ${fmtMoney(calcPrice(sec))}`;
+                card.querySelector('.total-amount').innerText = `🧾 ${fmtMoney(calcPrice(sec) + t.totalItems)}`;
+                card.querySelector('.items-list').innerHTML = t.items.length ? t.items.map(i=>`<div class="item-row"><span>${i.name} x${i.qty}</span><span>${fmtMoney(i.price*i.qty)}</span></div>`).join('') : '<em>Chưa có đồ</em>';
+            }
+        }
+        function updateDetailModal(id) {
+            const t = tables.find(x=>x.id===id);
+            if(!t) return;
+            const content = document.getElementById('detailModalContent');
+            content.innerHTML = renderDetailHTML(t);
+            bindDetailEvents(t);
+        }
+        function renderDetailHTML(t) {
+            const sec = getElapsed(t);
+            const price = calcPrice(sec);
+            const total = price + t.totalItems;
+            return `
+                <h3>🎱 Bàn ${t.id} <span class="badge ${t.status==='playing'?'playing':'idle'}">${t.status==='playing'?'Đang chơi':'Trống'}</span></h3>
+                <div class="info-panel">
+                    <div class="timer-display" style="font-family:'Dancing Script',cursive; font-size:1.8rem;">${fmtTime(sec)}</div>
+                    <div class="price-display">💰 Giờ: ${fmtMoney(price)}</div>
+                    <div class="items-list">${t.items.length ? t.items.map(i=>`<div class="item-row"><span>${i.name} x${i.qty}</span><span>${fmtMoney(i.price*i.qty)}</span></div>`).join('') : '<em>Chưa có đồ</em>'}</div>
+                    <div class="total-amount">🧾 ${fmtMoney(total)}</div>
+                </div>
+                <div class="btn-group" style="margin-top:10px;">
+                    ${t.status==='idle' 
+                        ? '<button class="success small" id="detailStartBtn"><i class="fas fa-play"></i> Bắt đầu</button>'
+                        : `<button class="warning small" id="detailAddBtn"><i class="fas fa-plus"></i> Thêm đồ</button>
+                           <button class="danger small" id="detailCheckoutBtn"><i class="fas fa-cash-register"></i> Tính tiền</button>`}
+                </div>
+                <button id="closeDetailBtn" class="danger small" style="margin-top:10px; width:100%;">Đóng</button>
+            `;
+        }
+        function bindDetailEvents(t) {
+            document.getElementById('detailStartBtn')?.addEventListener('click', ()=>{
+                startTable(t.id);
+                closeDetailModal();
+            });
+            document.getElementById('detailAddBtn')?.addEventListener('click', ()=>{
+                closeDetailModal();
+                openAddItemModal(t.id);
+            });
+            document.getElementById('detailCheckoutBtn')?.addEventListener('click', ()=>{
+                closeDetailModal();
+                checkout(t.id);
+            });
+            document.getElementById('closeDetailBtn')?.addEventListener('click', closeDetailModal);
+        }
+        function openDetailModal(id) {
+            currentDetailId = id;
+            const t = tables.find(t => t.id === id);
+            if (!t) return;
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailModalContent');
+            content.innerHTML = renderDetailHTML(t);
+            bindDetailEvents(t);
+            modal.classList.add('show');
+        }
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('show');
+            currentDetailId = null;
+        }
 
-    function loadDataFromStorage() {
-        const storedTables = localStorage.getItem("bida_tables");
-        if (storedTables) {
-            try {
-                const parsed = JSON.parse(storedTables);
-                if (Array.isArray(parsed) && parsed.length === 4) {
-                    tables = parsed.map(t => ({ ...t, timerInterval: null }));
-                    tables.forEach(t => {
-                        if (t.status === "playing" && t.startTime) {
-                            startTimerForTable(t.id);
-                        }
+        function renderTables() {
+            const grid = document.getElementById('tablesGrid');
+            grid.innerHTML = '';
+            tables.forEach((t,idx)=>{
+                const sec = getElapsed(t);
+                const card = document.createElement('div');
+                card.className = 'table-card';
+                card.setAttribute('data-id', t.id);
+                card.style.animationDelay = (idx*0.08)+'s';
+                card.innerHTML = `
+                    <div class="table-title">Bàn ${t.id} <span class="badge-wrap"><span class="badge ${t.status==='playing'?'playing':'idle'}">${t.status==='playing'?'🎱 Đang chơi':'🟢 Trống'}</span></span></div>
+                    <div class="info-panel">
+                        <div class="timer-display">${fmtTime(sec)}</div>
+                        <div class="price-display">💰 Giờ: ${fmtMoney(calcPrice(sec))}</div>
+                        <div class="items-list">${t.items.length ? t.items.map(i=>`<div class="item-row"><span>${i.name} x${i.qty}</span><span>${fmtMoney(i.price*i.qty)}</span></div>`).join('') : '<em>Chưa có đồ</em>'}</div>
+                        <div class="total-amount">🧾 ${fmtMoney(calcPrice(sec) + t.totalItems)}</div>
+                    </div>
+                    <div class="btn-group">
+                        ${t.status==='idle' 
+                            ? `<button class="success start-btn" data-id="${t.id}"><i class="fas fa-play"></i> Bắt đầu</button>`
+                            : `<button class="warning add-btn" data-id="${t.id}"><i class="fas fa-plus"></i> Thêm đồ</button>
+                               <button class="danger checkout-btn" data-id="${t.id}"><i class="fas fa-cash-register"></i> Tính tiền</button>`}
+                    </div>`;
+                if(compactMode) {
+                    card.addEventListener('click', (e) => {
+                        if(e.target.closest('button')) return;
+                        openDetailModal(t.id);
                     });
                 }
-            } catch(e) {}
+                grid.appendChild(card);
+                requestAnimationFrame(()=>card.classList.add('visible'));
+            });
+            document.querySelectorAll('.start-btn').forEach(b=>b.onclick=()=>startTable(+b.dataset.id));
+            document.querySelectorAll('.add-btn').forEach(b=>b.onclick=()=>openAddItemModal(+b.dataset.id));
+            document.querySelectorAll('.checkout-btn').forEach(b=>b.onclick=()=>checkout(+b.dataset.id));
         }
-        const storedHistory = localStorage.getItem("bida_history");
-        if (storedHistory) {
-            try {
-                historyPayments = JSON.parse(storedHistory);
-            } catch(e) {}
+
+        function startTable(id) {
+            const t = tables.find(x=>x.id===id);
+            if(!t || t.status!=='idle') return;
+            t.status='playing'; t.startTime=Date.now(); t.items=[]; t.totalItems=0;
+            save(); startTimer(id); renderTables();
         }
-    }
-
-    function saveTablesToStorage() {
-        const toSave = tables.map(t => {
-            const { timerInterval, ...rest } = t;
-            return rest;
-        });
-        localStorage.setItem("bida_tables", JSON.stringify(toSave));
-    }
-
-    function saveHistoryToStorage() {
-        localStorage.setItem("bida_history", JSON.stringify(historyPayments));
-    }
-
-    function formatTimeFromSeconds(totalSeconds) {
-        const hrs = Math.floor(totalSeconds / 3600);
-        const mins = Math.floor((totalSeconds % 3600) / 60);
-        const secs = totalSeconds % 60;
-        return `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-    }
-
-    function formatDateTime(timestamp) {
-        if (!timestamp) return "--";
-        const d = new Date(timestamp);
-        return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}`;
-    }
-
-    function updateTableUI(tableId) {
-        const table = tables.find(t => t.id === tableId);
-        if (!table) return;
-        const card = document.querySelector(`.table-card[data-id='${tableId}']`);
-        if (!card) return;
-        const isPlaying = table.status === "playing";
-        let currentSeconds = 0;
-        let currentPrice = 0;
-        if (isPlaying && table.startTime) {
-            currentSeconds = Math.floor((Date.now() - table.startTime) / 1000);
-            currentPrice = calculatePriceFromSeconds(currentSeconds);
-        } else if (table.status === "ended") {
-            if (table.endTime && table.startTime) {
-                currentSeconds = Math.floor((table.endTime - table.startTime) / 1000);
-                currentPrice = calculatePriceFromSeconds(currentSeconds);
-            }
+        function checkout(id) {
+            const t = tables.find(x=>x.id===id);
+            if(!t || t.status!=='playing') return;
+            if(t.interval){ clearInterval(t.interval); t.interval=null; }
+            const endTime = Date.now();
+            const sec = getElapsed(t);
+            const price = calcPrice(sec);
+            const total = price + t.totalItems;
+            pendingCheckout = { tableId:id, startTime:t.startTime, endTime, sec, price, items:[...t.items], totalItems:t.totalItems, total };
+            document.getElementById('checkoutTableId').innerText = id;
+            document.getElementById('checkoutSummary').innerHTML = `
+                ⏱ Chơi: ${fmtTime(sec)}<br>
+                💰 Tiền giờ: ${fmtMoney(price)}<br>
+                🍽 Đồ: ${fmtMoney(t.totalItems)}<br>
+                <strong>💵 Tổng: ${fmtMoney(total)}</strong>`;
+            document.getElementById('checkoutModal').classList.add('show');
         }
-        const totalDisplay = (isPlaying ? currentPrice : (table.finalTotal || 0)) + table.totalItemsPrice;
-        
-        const timerDiv = card.querySelector('.timer-display');
-        if (timerDiv) timerDiv.innerText = formatTimeFromSeconds(currentSeconds);
-        const priceDiv = card.querySelector('.price-display');
-        if (priceDiv) priceDiv.innerText = `${currentPrice.toLocaleString()}đ`;
-        const totalDiv = card.querySelector('.total-amount');
-        if (totalDiv) totalDiv.innerText = `🧾 Tổng tạm tính: ${totalDisplay.toLocaleString()}đ`;
-        
-        const itemsContainer = card.querySelector('.items-list');
-        if (itemsContainer) {
-            if (table.items.length) {
-                itemsContainer.innerHTML = table.items.map(it => `<div class="item-row"><span>${it.name} x${it.quantity}</span><span>${(it.price * it.quantity).toLocaleString()}đ</span></div>`).join('');
-            } else {
-                itemsContainer.innerHTML = '<em>Chưa có đồ uống/nước</em>';
-            }
+        function finalizePayment(method) {
+            if(!pendingCheckout) return;
+            const p = pendingCheckout;
+            history.unshift({
+                tableId:p.tableId, startTime:p.startTime, endTime:p.endTime, duration:p.sec,
+                priceTime:p.price, items:p.items, total:p.total, method, createdAt:Date.now()
+            });
+            const t = tables.find(x=>x.id===p.tableId);
+            if(t){ t.status='idle'; t.startTime=null; t.items=[]; t.totalItems=0; if(t.interval){clearInterval(t.interval);t.interval=null;} }
+            save(); renderTables(); renderHistory(); renderStats();
+            pendingCheckout=null;
+            document.getElementById('checkoutModal').classList.remove('show');
+            alert(`✅ Đã thanh toán bàn ${p.tableId} qua ${method}!`);
         }
-    }
-
-    function startTimerForTable(tableId) {
-        const table = tables.find(t => t.id === tableId);
-        if (table.timerInterval) clearInterval(table.timerInterval);
-        table.timerInterval = setInterval(() => {
-            if (table.status === "playing") {
-                updateTableUI(tableId);
-                updateMenuTabStatus(); // cập nhật trạng thái bàn trên tab menu
-            } else {
-                if (table.timerInterval) {
-                    clearInterval(table.timerInterval);
-                    table.timerInterval = null;
-                }
-            }
-        }, 1000);
-        updateTableUI(tableId);
-    }
-
-    // Hàm thêm món nhanh từ menu cố định
-    function addFixedItemToTable(tableId, itemName, itemPrice, quantity = 1) {
-        const table = tables.find(t => t.id === tableId);
-        if (!table) {
-            alert("Bàn không tồn tại!");
-            return false;
+        function openAddItemModal(id) {
+            modalTableId=id; modalCart=[]; renderModalItems(); updateModalCart();
+            document.getElementById('modalTableId').innerText=id;
+            document.getElementById('addItemModal').classList.add('show');
         }
-        if (table.status !== "playing") {
-            alert(`Bàn ${tableId} hiện đang trống. Chỉ có thể thêm đồ khi bàn đang có khách chơi!`);
-            return false;
-        }
-        // Thêm item mới (không gộp để đơn giản, nhưng có thể gộp nếu muốn, giữ nguyên phong cách)
-        table.items.push({ name: itemName, price: itemPrice, quantity: quantity });
-        table.totalItemsPrice += itemPrice * quantity;
-        saveTablesToStorage();
-        updateTableUI(tableId);
-        return true;
-    }
-
-    function renderTables() {
-        const container = document.getElementById("tablesGrid");
-        if (!container) return;
-        container.innerHTML = "";
-        for (let tbl of tables) {
-            const isPlaying = tbl.status === "playing";
-            const currentSeconds = (isPlaying && tbl.startTime) ? Math.floor((Date.now() - tbl.startTime) / 1000) : 0;
-            const currentPrice = isPlaying ? calculatePriceFromSeconds(currentSeconds) : (tbl.finalTotal || 0);
-            const totalDisplay = (isPlaying ? currentPrice : (tbl.finalTotal || 0)) + tbl.totalItemsPrice;
-            
-            const card = document.createElement("div");
-            card.className = "table-card";
-            card.setAttribute("data-id", tbl.id);
-            card.innerHTML = `
-                <div class="table-title">
-                    Bàn ${tbl.id}
-                    <span class="badge-status ${isPlaying ? 'playing' : ''}">${isPlaying ? 'Đang chơi 🎱' : 'Trống 🟢'}</span>
-                </div>
-                <div class="info-panel">
-                    <div class="timer-display">${formatTimeFromSeconds(currentSeconds)}</div>
-                    <div class="price-display">${currentPrice.toLocaleString()}đ</div>
-                    <div class="items-list" id="itemsList-${tbl.id}">
-                        ${tbl.items.length ? tbl.items.map(it => `<div class="item-row"><span>${it.name} x${it.quantity}</span><span>${(it.price * it.quantity).toLocaleString()}đ</span></div>`).join('') : '<em>Chưa có đồ uống/nước</em>'}
+        function renderModalItems() {
+            const div = document.getElementById('modalItemList');
+            div.innerHTML = MENU.map(m=>{
+                const inCart = modalCart.find(c=>c.name===m.name);
+                const qty = inCart ? inCart.qty : 0;
+                return `<div class="item-row-select">
+                    <div class="info"><i>${m.icon}</i> <span>${m.name}</span> <span style="color:var(--accent);font-weight:700;">${fmtK(m.price)}</span></div>
+                    <div class="qty-ctrl">
+                        <button class="modal-minus" data-name="${m.name}">−</button>
+                        <span>${qty}</span>
+                        <button class="modal-plus" data-name="${m.name}" data-price="${m.price}" data-icon="${m.icon}">+</button>
                     </div>
-                    <div class="total-amount">🧾 Tổng tạm tính: ${totalDisplay.toLocaleString()}đ</div>
-                </div>
-                <div class="btn-group">
-                    ${!isPlaying ? `<button class="success start-btn" data-id="${tbl.id}"><i class="fas fa-play"></i> Bắt đầu</button>` : 
-                                    `<button class="warning add-item-btn" data-id="${tbl.id}"><i class="fas fa-plus-circle"></i> Thêm đồ</button>
-                                     <button class="danger end-btn" data-id="${tbl.id}"><i class="fas fa-stop"></i> Kết thúc</button>`}
-                </div>
-            `;
-            container.appendChild(card);
+                </div>`;
+            }).join('');
+            div.querySelectorAll('.modal-plus').forEach(b=>b.onclick=()=>addModalItem(b.dataset.name,+b.dataset.price,b.dataset.icon));
+            div.querySelectorAll('.modal-minus').forEach(b=>b.onclick=()=>removeModalItem(b.dataset.name));
+        }
+        function addModalItem(name,price,icon) {
+            const ex = modalCart.find(c=>c.name===name);
+            if(ex) ex.qty++; else modalCart.push({name,price,icon,qty:1});
+            renderModalItems(); updateModalCart();
+        }
+        function removeModalItem(name) {
+            const ex = modalCart.find(c=>c.name===name);
+            if(ex){ ex.qty--; if(ex.qty<=0) modalCart=modalCart.filter(c=>c.name!==name); }
+            renderModalItems(); updateModalCart();
+        }
+        function updateModalCart() {
+            const box=document.getElementById('modalCartBox'), itemsDiv=document.getElementById('modalCartItems'), totalDiv=document.getElementById('modalCartTotal');
+            if(modalCart.length===0){ box.style.display='none'; return; }
+            box.style.display='block';
+            itemsDiv.innerHTML = modalCart.map(c=>`<div class="cart-item"><span>${c.icon} ${c.name} x${c.qty}</span><span>${fmtK(c.price*c.qty)}</span></div>`).join('');
+            totalDiv.innerText = 'Tổng: '+fmtK(modalCart.reduce((s,c)=>s+c.price*c.qty,0));
+        }
+        function confirmModalCart() {
+            if(!modalTableId || modalCart.length===0) return;
+            const t = tables.find(x=>x.id===modalTableId);
+            if(!t || t.status!=='playing') return;
+            modalCart.forEach(c=>{ t.items.push({name:c.name,price:c.price,icon:c.icon,qty:c.qty}); t.totalItems+=c.price*c.qty; });
+            save(); updateTableCard(modalTableId); renderTables();
+            modalCart=[]; document.getElementById('addItemModal').classList.remove('show');
+        }
+        function renderHistory(filter='all') {
+            const tbody=document.getElementById('historyBody');
+            const data = filter==='all' ? history : history.filter(h=>h.tableId===+filter);
+            tbody.innerHTML = data.map(h=>`
+                <tr><td>${h.tableId}</td><td>${fmtDate(h.startTime)}</td><td>${fmtDate(h.endTime)}</td>
+                <td>${fmtTime(h.duration)}</td><td>${fmtMoney(h.priceTime)}</td>
+                <td>${h.items.map(i=>`${i.name} x${i.qty}`).join(', ')||'—'}</td>
+                <td><strong>${fmtMoney(h.total)}</strong></td><td>${h.method}</td></tr>`).join('');
+        }
+        function renderStats() {
+            const now=Date.now(), todayStart=new Date().setHours(0,0,0,0), monthStart=new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime();
+            let today=0, month=0, all=0;
+            history.forEach(h=>{ all+=h.total; if(h.createdAt>=todayStart) today+=h.total; if(h.createdAt>=monthStart) month+=h.total; });
+            document.getElementById('statsSummary').innerHTML = `
+                <div>📅 Hôm nay: <strong>${fmtMoney(today)}</strong></div>
+                <div>📆 Tháng: <strong>${fmtMoney(month)}</strong></div>
+                <div>📈 Tổng: <strong>${fmtMoney(all)}</strong></div>`;
+            const stats={1:{c:0,s:0,pt:0,pi:0},2:{c:0,s:0,pt:0,pi:0},3:{c:0,s:0,pt:0,pi:0},4:{c:0,s:0,pt:0,pi:0}};
+            history.forEach(h=>{ if(stats[h.tableId]){ stats[h.tableId].c++; stats[h.tableId].s+=h.duration; stats[h.tableId].pt+=h.priceTime; stats[h.tableId].pi+=h.items.reduce((s,i)=>s+i.price*i.qty,0); } });
+            const tb=document.getElementById('perTableStatsBody');
+            tb.innerHTML = [1,2,3,4].map(i=>{ const s=stats[i]; return `<tr><td>Bàn ${i}</td><td>${s.c}</td><td>${(s.s/3600).toFixed(1)}h</td><td>${fmtMoney(s.pt)}</td><td>${fmtMoney(s.pi)}</td><td><strong>${fmtMoney(s.pt+s.pi)}</strong></td></tr>`; }).join('');
+            drawChart();
+        }
+        function drawChart() {
+            const canvas=document.getElementById('revenueChart');
+            if(!canvas) return;
+            const ctx=canvas.getContext('2d');
+            canvas.width=canvas.clientWidth||400; canvas.height=180;
+            const days=[]; for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); d.setHours(0,0,0,0); days.push(d.getTime()); }
+            const rev=days.map(ds=>history.reduce((s,h)=>h.createdAt>=ds&&h.createdAt<ds+86400000?s+h.total:s,0));
+            const max=Math.max(...rev,10000), w=canvas.width, h=canvas.height;
+            ctx.clearRect(0,0,w,h);
+            const bw=(w-40)/7;
+            ctx.fillStyle='#f3b33d';
+            rev.forEach((v,i)=>{ const bh=(v/max)*(h-30); ctx.fillRect(20+i*bw,h-15-bh,bw-3,bh); });
+            ctx.fillStyle='#333'; ctx.font='10px sans-serif';
+            days.forEach((d,i)=>ctx.fillText(new Date(d).getDate(),20+i*bw+3,h-2));
+        }
+        function renderMenuStrip() {
+            document.getElementById('menuStrip').innerHTML = MENU.map(m=>`
+                <div class="menu-strip-item"><i>${m.icon}</i> <span>${m.name}</span> <span style="color:var(--accent); font-weight:700;">${fmtK(m.price)}</span></div>
+            `).join('');
         }
 
-        document.querySelectorAll('.start-btn').forEach(btn => {
-            btn.addEventListener('click', () => startTable(parseInt(btn.dataset.id)));
-        });
-        document.querySelectorAll('.add-item-btn').forEach(btn => {
-            btn.addEventListener('click', () => openAddItemModal(parseInt(btn.dataset.id)));
-        });
-        document.querySelectorAll('.end-btn').forEach(btn => {
-            btn.addEventListener('click', () => endTable(parseInt(btn.dataset.id)));
-        });
-    }
-
-    function startTable(tableId) {
-        const table = tables.find(t => t.id === tableId);
-        if (!table || table.status === "playing") return;
-        table.status = "playing";
-        table.startTime = Date.now();
-        table.items = [];
-        table.totalItemsPrice = 0;
-        table.endTime = null;
-        table.finalTotal = null;
-        saveTablesToStorage();
-        startTimerForTable(tableId);
-        renderTables();
-        updateMenuTabStatus();
-    }
-
-    let currentTableIdForItem = null;
-    function openAddItemModal(tableId) {
-        currentTableIdForItem = tableId;
-        document.getElementById("itemName").value = "";
-        document.getElementById("itemPrice").value = "";
-        document.getElementById("itemQuantity").value = "1";
-        document.getElementById("addItemModal").style.display = "flex";
-    }
-
-    function closeAddItemModal() {
-        document.getElementById("addItemModal").style.display = "none";
-        currentTableIdForItem = null;
-    }
-
-    function confirmAddItem() {
-        if (currentTableIdForItem === null) return;
-        const name = document.getElementById("itemName").value.trim();
-        let price = parseInt(document.getElementById("itemPrice").value);
-        let quantity = parseInt(document.getElementById("itemQuantity").value);
-        if (!name || isNaN(price) || price <= 0 || isNaN(quantity) || quantity <= 0) {
-            alert("Vui lòng nhập đầy đủ tên món, đơn giá hợp lệ (>0) và số lượng");
-            return;
-        }
-        const table = tables.find(t => t.id === currentTableIdForItem);
-        if (table && table.status === "playing") {
-            table.items.push({ name, price, quantity });
-            table.totalItemsPrice += price * quantity;
-            saveTablesToStorage();
-            updateTableUI(currentTableIdForItem);
-        }
-        closeAddItemModal();
-    }
-
-    function endTable(tableId) {
-        const table = tables.find(t => t.id === tableId);
-        if (!table || table.status !== "playing") return;
-        if (table.timerInterval) {
-            clearInterval(table.timerInterval);
-            table.timerInterval = null;
-        }
-        const endTime = Date.now();
-        const start = table.startTime;
-        const secondsPlayed = Math.floor((endTime - start) / 1000);
-        const priceTime = calculatePriceFromSeconds(secondsPlayed);
-        const totalAmount = priceTime + table.totalItemsPrice;
-        
-        currentPendingTable = {
-            tableId: table.id,
-            startTime: start,
-            endTime: endTime,
-            secondsPlayed: secondsPlayed,
-            priceTime: priceTime,
-            items: [...table.items],
-            totalItemsPrice: table.totalItemsPrice,
-            totalAmount: totalAmount
+        // Event binding
+        document.getElementById('toggleCompactBtn').onclick = ()=>{
+            compactMode=!compactMode;
+            document.body.classList.toggle('compact-mode',compactMode);
+            document.getElementById('toggleLabel').innerText = compactMode?'Mở rộng':'Thu nhỏ';
+            save(); renderTables();
         };
-        
-        const modal = document.getElementById("paymentMethodModal");
-        document.getElementById("paymentTableId").innerText = table.id;
-        const summaryDiv = document.getElementById("paymentSummary");
-        summaryDiv.innerHTML = `
-            <div>⏱ Thời gian chơi: ${formatTimeFromSeconds(secondsPlayed)}</div>
-            <div>💰 Tiền giờ: ${priceTime.toLocaleString()}đ</div>
-            <div>🍻 Đồ uống/ăn: ${table.totalItemsPrice.toLocaleString()}đ</div>
-            <div style="font-size:1.2rem; margin-top:8px;">💵 Tổng cộng: ${totalAmount.toLocaleString()}đ</div>
-        `;
-        modal.style.display = "flex";
-    }
-    
-    function handleCashPayment() {
-        if (!currentPendingTable) return;
-        finalizePayment(currentPendingTable, "Tiền mặt");
-        document.getElementById("paymentMethodModal").style.display = "none";
-        currentPendingTable = null;
-    }
-    
-    function handleQRPayment() {
-        if (!currentPendingTable) return;
-        const { totalAmount, startTime, tableId } = currentPendingTable;
-        const startDate = new Date(startTime);
-        const day = startDate.getDate().toString().padStart(2,'0');
-        const month = (startDate.getMonth()+1).toString().padStart(2,'0');
-        const year = startDate.getFullYear();
-        const hours = startDate.getHours().toString().padStart(2,'0');
-        const minutes = startDate.getMinutes().toString().padStart(2,'0');
-        const seconds = startDate.getSeconds().toString().padStart(2,'0');
-        const noteContent = `TIEN BAN ${tableId} ${day}/${month}/${year}-${hours}/${minutes}/${seconds}`;
-        const encodedNote = encodeURIComponent(noteContent);
-        const amountInt = Math.floor(totalAmount);
-        const qrUrl = `https://img.vietqr.io/image/${BANK_BIN}-${ACCOUNT_NO}-qr_only.jpg?accountName=${encodeURIComponent(ACCOUNT_NAME)}&amount=${amountInt}&addInfo=${encodedNote}`;
-        const qrImg = document.getElementById("qrCodeImg");
-        qrImg.src = qrUrl;
-        document.getElementById("qrInfo").innerHTML = `Số tiền: ${amountInt.toLocaleString()}đ<br>Nội dung: ${noteContent}<br>Quét QR bằng MB Bank hoặc app ngân hàng`;
-        document.getElementById("qrModal").style.display = "flex";
-        document.getElementById("paymentMethodModal").style.display = "none";
-        
-        const confirmBtn = document.getElementById("confirmPaymentAfterQrBtn");
-        const closeBtn = document.getElementById("closeQrBtn");
-        const confirmHandler = () => {
-            finalizePayment(currentPendingTable, "QR Bank (MB)");
-            document.getElementById("qrModal").style.display = "none";
-            cleanupQrEvents();
-            currentPendingTable = null;
-        };
-        const closeHandler = () => {
-            document.getElementById("qrModal").style.display = "none";
-            cleanupQrEvents();
-            document.getElementById("paymentMethodModal").style.display = "flex";
-            const table = tables.find(t => t.id === currentPendingTable.tableId);
-            if (table && table.status === "playing") startTimerForTable(table.id);
-            currentPendingTable = null;
-        };
-        function cleanupQrEvents() {
-            confirmBtn.removeEventListener("click", confirmHandler);
-            closeBtn.removeEventListener("click", closeHandler);
-        }
-        confirmBtn.removeEventListener("click", confirmHandler);
-        closeBtn.removeEventListener("click", closeHandler);
-        confirmBtn.addEventListener("click", confirmHandler);
-        closeBtn.addEventListener("click", closeHandler);
-    }
-    
-    function finalizePayment(paymentData, method) {
-        const { tableId, startTime, endTime, secondsPlayed, priceTime, items, totalItemsPrice, totalAmount } = paymentData;
-        const record = {
-            tableId: tableId,
-            startTime: startTime,
-            endTime: endTime,
-            durationSeconds: secondsPlayed,
-            priceTime: priceTime,
-            items: items.map(it => ({ name: it.name, price: it.price, quantity: it.quantity })),
-            total: totalAmount,
-            paymentMethod: method,
-            note: `Bàn ${tableId} - ${formatDateTime(startTime)}`,
-            createdAt: Date.now()
-        };
-        historyPayments.unshift(record);
-        saveHistoryToStorage();
-        
-        const table = tables.find(t => t.id === tableId);
-        if (table) {
-            table.status = "idle";
-            table.startTime = null;
-            table.items = [];
-            table.totalItemsPrice = 0;
-            table.endTime = null;
-            table.finalTotal = null;
-            if (table.timerInterval) {
-                clearInterval(table.timerInterval);
-                table.timerInterval = null;
-            }
-        }
-        saveTablesToStorage();
-        renderTables();
-        renderHistoryAndStats();
-        updateMenuTabStatus();
-        alert(`THANH TOÁN THÀNH CÔNG 💸💸!! BÀN ${tableId} ĐANG TRỐNG 🎱.`);
-    }
-
-    function renderHistoryAndStats() {
-        const tbody = document.getElementById("historyBody");
-        if (tbody) {
-            tbody.innerHTML = "";
-            for (let h of historyPayments) {
-                const itemsStr = h.items.map(it => `${it.name} x${it.quantity} (${(it.price*it.quantity).toLocaleString()}đ)`).join(", ") || "Không";
-                const row = tbody.insertRow();
-                row.innerHTML = `<td>${h.tableId}</td><td>${formatDateTime(h.startTime)}</td><td>${formatDateTime(h.endTime)}</td><td>${formatTimeFromSeconds(h.durationSeconds)}</td><td>${h.priceTime.toLocaleString()}đ</td><td>${itemsStr}</td><td><strong>${h.total.toLocaleString()}đ</strong></td><td>${h.paymentMethod}</td><td>${h.note}</td>`;
-            }
-        }
-
-        const statsDiv = document.getElementById("statsSummary");
-        const today = new Date();
-        const firstDayMonth = new Date(today.getFullYear(), today.getMonth(), 1).getTime();
-        let totalToday = 0, totalMonth = 0, totalAll = 0;
-        for (let h of historyPayments) {
-            totalAll += h.total;
-            if (h.createdAt >= new Date().setHours(0,0,0,0)) totalToday += h.total;
-            if (h.createdAt >= firstDayMonth) totalMonth += h.total;
-        }
-        if (statsDiv) {
-            statsDiv.innerHTML = `<div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:space-around"><div><i class="fas fa-calendar-day"></i> Hôm nay: <strong>${totalToday.toLocaleString()}đ</strong></div><div><i class="fas fa-calendar-alt"></i> Tháng này: <strong>${totalMonth.toLocaleString()}đ</strong></div><div><i class="fas fa-chart-line"></i> Tổng doanh thu: <strong>${totalAll.toLocaleString()}đ</strong></div></div>`;
-        }
-        
-        const perTableBody = document.getElementById("perTableStatsBody");
-        if (perTableBody) {
-            const stats = {1:{count:0,totalSeconds:0,totalPriceTime:0,totalItemsPrice:0},2:{count:0,totalSeconds:0,totalPriceTime:0,totalItemsPrice:0},3:{count:0,totalSeconds:0,totalPriceTime:0,totalItemsPrice:0},4:{count:0,totalSeconds:0,totalPriceTime:0,totalItemsPrice:0}};
-            for (let h of historyPayments) {
-                if (stats[h.tableId]) {
-                    stats[h.tableId].count++;
-                    stats[h.tableId].totalSeconds += h.durationSeconds;
-                    stats[h.tableId].totalPriceTime += h.priceTime;
-                    stats[h.tableId].totalItemsPrice += h.items.reduce((sum, it) => sum + (it.price * it.quantity), 0);
-                }
-            }
-            perTableBody.innerHTML = "";
-            for (let i=1;i<=4;i++) {
-                const s = stats[i];
-                const totalHours = (s.totalSeconds / 3600).toFixed(2);
-                const totalRevenue = s.totalPriceTime + s.totalItemsPrice;
-                perTableBody.insertRow().innerHTML = `<td>Bàn ${i}</td><td>${s.count}</td><td>${totalHours} giờ</td><td>${s.totalPriceTime.toLocaleString()}đ</td><td>${s.totalItemsPrice.toLocaleString()}đ</td><td><strong>${totalRevenue.toLocaleString()}đ</strong></td>`;
-            }
-        }
-        drawWeeklyChart();
-    }
-
-    function drawWeeklyChart() {
-        const canvas = document.getElementById("revenueChart");
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        const last7Days = [];
-        for (let i=6;i>=0;i--) {
-            const d = new Date();
-            d.setDate(d.getDate()-i);
-            d.setHours(0,0,0,0);
-            last7Days.push(d.getTime());
-        }
-        const revenueByDay = last7Days.map(dayStart => historyPayments.reduce((sum, h) => (h.createdAt >= dayStart && h.createdAt < dayStart+86400000) ? sum+h.total : sum, 0));
-        canvas.width = canvas.clientWidth;
-        canvas.height = 200;
-        const w=canvas.width, h=canvas.height;
-        ctx.clearRect(0,0,w,h);
-        if(w<=0) return;
-        const maxRev = Math.max(...revenueByDay, 1000);
-        const barWidth = (w-60)/7;
-        ctx.fillStyle = "#f3b33d";
-        for(let i=0;i<7;i++) {
-            const barHeight = (revenueByDay[i]/maxRev)*(h-40);
-            ctx.fillRect(40 + i*barWidth, h-20-barHeight, barWidth-4, barHeight);
-            ctx.fillStyle = "#fff";
-            ctx.font = "10px sans-serif";
-            ctx.fillText(new Date(last7Days[i]).getDate().toString(), 40 + i*barWidth + 5, h-5);
-            ctx.fillStyle = "#f3b33d";
-        }
-        ctx.fillStyle = "#f5e7d3";
-        ctx.fillText("Doanh thu 7 ngày gần nhất", 10, 20);
-    }
-
-    function initTabs() {
-        document.querySelectorAll(".tab-btn").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const target = btn.dataset.tab;
-                document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-                document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
-                document.getElementById(target).classList.add("active");
-                if (target === "statsTab") drawWeeklyChart();
-                if (target === "menuTab") renderFixedMenuAndStatus();
-            });
+        document.getElementById('themeSelect').onchange = function(){ applyTheme(this.value); };
+        document.querySelectorAll('.tab-btn').forEach(b=>b.onclick=function(){
+            document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
+            document.getElementById(this.dataset.tab).classList.add('active');
+            if(this.dataset.tab==='statsTab'){ renderStats(); drawChart(); }
+            if(this.dataset.tab==='menuTab') renderMenuStrip();
         });
-    }
+        document.getElementById('applyFilterBtn').onclick = ()=>renderHistory(document.getElementById('filterTableSelect').value);
+        document.getElementById('exportTxtBtn').onclick = ()=>{
+            let c='LỊCH SỬ BIDA\n';
+            history.forEach(h=>c+=`Bàn ${h.tableId} | ${fmtDate(h.startTime)}->${fmtDate(h.endTime)} | ${fmtTime(h.duration)} | Giờ:${fmtMoney(h.priceTime)} | Đồ:${h.items.map(i=>i.name+'x'+i.qty).join(',')||'Không'} | Tổng:${fmtMoney(h.total)} | ${h.method}\n`);
+            const b=new Blob([c],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='lich_su_bida.txt'; a.click();
+        };
+        document.getElementById('exportCsvBtn').onclick = ()=>{
+            let c='Bàn,Bắt đầu,Kết thúc,Giờ,Tiền giờ,Đồ,Tổng,PT\n';
+            history.forEach(h=>c+=`${h.tableId},"${fmtDate(h.startTime)}","${fmtDate(h.endTime)}",${fmtTime(h.duration)},${h.priceTime},"${h.items.map(i=>i.name+'x'+i.qty).join(';')}",${h.total},${h.method}\n`);
+            const b=new Blob([c],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='lich_su_bida.csv'; a.click();
+        };
+        document.getElementById('deleteHistoryBtn').onclick = ()=>document.getElementById('deleteModal').classList.add('show');
+        document.getElementById('cancelDeleteBtn').onclick = ()=>{ document.getElementById('deleteModal').classList.remove('show'); document.getElementById('deletePass').value=''; };
+        document.getElementById('confirmDeleteBtn').onclick = ()=>{
+            if(document.getElementById('deletePass').value===DELETE_PASS){
+                history=[]; save(); renderHistory(); renderStats();
+                document.getElementById('deleteModal').classList.remove('show');
+                document.getElementById('deletePass').value='';
+                alert('Đã xóa lịch sử!');
+            } else alert('Sai mật khẩu!');
+        };
+        document.getElementById('cancelModalBtn').onclick = ()=>{ document.getElementById('addItemModal').classList.remove('show'); modalCart=[]; };
+        document.getElementById('confirmModalBtn').onclick = confirmModalCart;
+        document.getElementById('cashBtn').onclick = ()=>finalizePayment('Tiền mặt');
+        document.getElementById('qrBtn').onclick = ()=>{
+            if(!pendingCheckout) return;
+            const amt=Math.floor(pendingCheckout.total);
+            const d=new Date(pendingCheckout.startTime);
+            const note=`TIEN BAN ${pendingCheckout.tableId} ${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}-${d.getHours().toString().padStart(2,'0')}/${d.getMinutes().toString().padStart(2,'0')}`;
+            const url=`https://img.vietqr.io/image/${BANK_BIN}-${ACCOUNT_NO}-qr_only.jpg?accountName=${encodeURIComponent(ACCOUNT_NAME)}&amount=${amt}&addInfo=${encodeURIComponent(note)}`;
+            document.getElementById('qrImage').src=url;
+            document.getElementById('qrInfo').innerHTML=`Số tiền: ${fmtMoney(amt)}<br>Nội dung: ${note}`;
+            document.getElementById('qrModal').classList.add('show');
+            document.getElementById('checkoutModal').classList.remove('show');
+        };
+        document.getElementById('confirmQrBtn').onclick = ()=>{ finalizePayment('QR Bank'); document.getElementById('qrModal').classList.remove('show'); };
+        document.getElementById('closeQrBtn').onclick = ()=>{ document.getElementById('qrModal').classList.remove('show'); document.getElementById('checkoutModal').classList.add('show'); };
+        document.getElementById('cancelCheckoutBtn').onclick = ()=>{
+            document.getElementById('checkoutModal').classList.remove('show');
+            if(pendingCheckout){ const t=tables.find(x=>x.id===pendingCheckout.tableId); if(t&&t.status==='playing') startTimer(t.id); pendingCheckout=null; }
+        };
+        document.getElementById('closeWelcomeBtn').onclick = ()=> document.getElementById('welcomeModal').classList.remove('show');
+        window.onclick = function(e){
+            if(e.target===document.getElementById('addItemModal')){ document.getElementById('addItemModal').classList.remove('show'); modalCart=[]; }
+            if(e.target===document.getElementById('checkoutModal')){ document.getElementById('checkoutModal').classList.remove('show'); if(pendingCheckout){ const t=tables.find(x=>x.id===pendingCheckout.tableId); if(t&&t.status==='playing') startTimer(t.id); pendingCheckout=null; } }
+            if(e.target===document.getElementById('qrModal')){ document.getElementById('qrModal').classList.remove('show'); document.getElementById('checkoutModal').classList.add('show'); }
+            if(e.target===document.getElementById('deleteModal')){ document.getElementById('deleteModal').classList.remove('show'); document.getElementById('deletePass').value=''; }
+            if(e.target===document.getElementById('detailModal')) closeDetailModal();
+            if(e.target===document.getElementById('welcomeModal')) document.getElementById('welcomeModal').classList.remove('show');
+        };
 
-    function renderFixedMenuAndStatus() {
-        const menuGrid = document.getElementById("foodMenuGrid");
-        if (!menuGrid) return;
-        menuGrid.innerHTML = "";
-        FIXED_MENU.forEach(menu => {
-            const card = document.createElement("div");
-            card.className = "menu-item-card";
-            card.innerHTML = `
-                <div class="menu-item-name">${menu.name}</div>
-                <div class="menu-item-price">${menu.price.toLocaleString()}đ</div>
-                <button class="menu-item-btn" data-name="${menu.name}" data-price="${menu.price}"><i class="fas fa-cart-plus"></i> Thêm +1</button>
-            `;
-            menuGrid.appendChild(card);
-        });
-        document.querySelectorAll(".menu-item-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const name = btn.getAttribute("data-name");
-                const price = parseInt(btn.getAttribute("data-price"));
-                const selectedTableId = parseInt(document.getElementById("quickMenuTableSelect").value);
-                addFixedItemToTable(selectedTableId, name, price, 1);
-            });
-        });
-        updateMenuTabStatus();
-    }
-
-    function updateMenuTabStatus() {
-        const selectedId = parseInt(document.getElementById("quickMenuTableSelect")?.value || 1);
-        const table = tables.find(t => t.id === selectedId);
-        const statusDiv = document.getElementById("selectedTableStatus");
-        if (table && table.status === "playing") {
-            statusDiv.innerHTML = `✅ Bàn ${selectedId} - ĐANG CHƠI (có thể thêm món)`;
-            statusDiv.className = "status-badge playing-menu";
-        } else {
-            statusDiv.innerHTML = `⛔ Bàn ${selectedId} - TRỐNG (chỉ thêm được khi đang chơi)`;
-            statusDiv.className = "status-badge";
-        }
-    }
-
-    function exportStatisticsTXT() {
-        let content = "BÁO CÁO THỐNG KÊ QUÁN BIDA (4 BÀN)\nNgày xuất: "+new Date().toLocaleString()+"\n\n";
-        let totalRevenue = historyPayments.reduce((acc, h) => acc + h.total, 0);
-        content += `Tổng doanh thu: ${totalRevenue.toLocaleString()} VNĐ\n\nDANH SÁCH GIAO DỊCH:\n--------------------------------------------------------------------------------------------------------\n`;
-        for (let h of historyPayments) {
-            const itemsStr = h.items.map(it => `${it.name}(${it.quantity})`).join(", ");
-            content += `Bàn ${h.tableId} | ${formatDateTime(h.startTime)} -> ${formatDateTime(h.endTime)} | TG: ${formatTimeFromSeconds(h.durationSeconds)} | Tiền giờ: ${h.priceTime.toLocaleString()}đ | Đồ: ${itemsStr||"Không"} | Tổng: ${h.total.toLocaleString()}đ | PT: ${h.paymentMethod}\n`;
-        }
-        const blob = new Blob([content], {type:"text/plain;charset=utf-8"});
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `ThongKe_Bida_${new Date().toISOString().slice(0,19)}.txt`;
-        link.click();
-        URL.revokeObjectURL(link.href);
-    }
-
-    function showDeleteHistoryModal() { document.getElementById("deleteConfirmModal").style.display = "flex"; }
-    function deleteHistory() {
-        if(document.getElementById("deletePassword").value === DELETE_PASSWORD) {
-            historyPayments = [];
-            saveHistoryToStorage();
-            renderHistoryAndStats();
-            document.getElementById("deleteConfirmModal").style.display = "none";
-            document.getElementById("deletePassword").value = "";
-            alert("Đã xóa lịch sử!");
-        } else alert("Mật khẩu không chính xác!");
-    }
-
-    function createSubtleStars() {
-        for (let i=0; i<60; i++) {
-            const star = document.createElement('div');
-            star.classList.add('star');
-            star.style.left = `${Math.random() * 100}%`;
-            star.style.top = `${Math.random() * 100}%`;
-            star.style.width = `${Math.random() * 2 + 1}px`;
-            star.style.height = star.style.width;
-            star.style.animationDelay = `${Math.random() * 5}s`;
-            document.body.appendChild(star);
-        }
-    }
-
-    loadDataFromStorage();
-    renderTables();
-    renderHistoryAndStats();
-    initTabs();
-    renderFixedMenuAndStatus();
-    createSubtleStars();
-    document.getElementById("quickMenuTableSelect")?.addEventListener("change", updateMenuTabStatus);
-    setInterval(updateMenuTabStatus, 1500);
-
-    document.getElementById("confirmItemBtn").addEventListener("click", confirmAddItem);
-    document.getElementById("cancelItemBtn").addEventListener("click", closeAddItemModal);
-    document.getElementById("exportTxtBtn").addEventListener("click", exportStatisticsTXT);
-    document.getElementById("deleteHistoryBtn").addEventListener("click", showDeleteHistoryModal);
-    document.getElementById("cancelDeleteBtn").addEventListener("click", () => { document.getElementById("deleteConfirmModal").style.display = "none"; document.getElementById("deletePassword").value = ""; });
-    document.getElementById("confirmDeleteBtn").addEventListener("click", deleteHistory);
-    document.getElementById("cashPaymentBtn").addEventListener("click", handleCashPayment);
-    document.getElementById("qrPaymentBtn").addEventListener("click", handleQRPayment);
-    document.getElementById("cancelPaymentBtn").addEventListener("click", () => {
-        document.getElementById("paymentMethodModal").style.display = "none";
-        if (currentPendingTable) {
-            const table = tables.find(t => t.id === currentPendingTable.tableId);
-            if (table && table.status === "playing") startTimerForTable(table.id);
-            currentPendingTable = null;
-        }
-    });
-    window.addEventListener("click", (e) => {
-        if (e.target === document.getElementById("addItemModal")) closeAddItemModal();
-        if (e.target === document.getElementById("qrModal")) {
-            document.getElementById("qrModal").style.display = "none";
-            if (currentPendingTable) {
-                document.getElementById("paymentMethodModal").style.display = "flex";
-                const table = tables.find(t => t.id === currentPendingTable.tableId);
-                if (table && table.status === "playing") startTimerForTable(table.id);
-                currentPendingTable = null;
-            }
-        }
-        if (e.target === document.getElementById("paymentMethodModal")) {
-            document.getElementById("paymentMethodModal").style.display = "none";
-            if (currentPendingTable) {
-                const table = tables.find(t => t.id === currentPendingTable.tableId);
-                if (table && table.status === "playing") startTimerForTable(table.id);
-                currentPendingTable = null;
-            }
-        }
-        if (e.target === document.getElementById("deleteConfirmModal")) {
-            document.getElementById("deleteConfirmModal").style.display = "none";
-            document.getElementById("deletePassword").value = "";
-        }
-    });
+        load(); renderTables(); renderHistory(); renderStats(); renderMenuStrip();
+        if(document.querySelector('.tab-btn.active')?.dataset.tab==='statsTab') drawChart();
+    })();
 </script>
 </body>
 </html>
